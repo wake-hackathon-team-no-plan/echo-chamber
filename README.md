@@ -1,24 +1,42 @@
-# echo-chamber
-_By Team No Plan - WAKE Hackathon 2025_
+## プロジェクト構成
 
-このアプリは、ユーザーが単語に反応することで、自身の価値観や思考のパターンをAIが分析・可視化し、最終的に動画で表現する自己理解支援アプリです。
-
-## 🏗 プロジェクト構成
 ```
-echo-chamber/
-├── frontend/     # Next.js で構築されたフロントエンド
-├── backend/      # AWS Lambda上で動作するAPI（言語・構成は検討中）
-├── README.md
-└── .gitignore
+my-app/
+├── app/
+│   ├── actions/            # 各機能のサーバーアクション
+│   ├── [page]/             # 各ページのディレクトリ
+│   └── ...
+│
+├── components/
+│   ├── ui/                 # 基本コンポーネント
+│   └── feature/            # 特定のUI
+│
+├── lib/                    # ビジネスロジック
+│   └── ...
+│
+├── types/                  # TypeScript型定義
+├── public/                 # 静的ファイル
+└── package.json
 ```
 
-## ▶️ フロントエンドの起動方法
+## クローンからサーバー立ち上げまでの手順
+
+1. リポジトリをクローンします。
 
 ```bash
-cd frontend
+git clone <リポジトリのURL>
+```
 
-# 依存パッケージをインストール（初回のみ）
+2. 依存関係をインストールします。
+
+```bash
 npm install
+```
 
-# 開発サーバーを起動
+3. 開発サーバーを起動します。
+
+```bash
 npm run dev
+```
+
+4. ブラウザで[http://localhost:3000](http://localhost:3000)にアクセスして、アプリケーションを確認します。
