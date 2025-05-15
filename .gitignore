@@ -16,3 +16,8 @@
 
 # vercel
 .vercel
+
+# project specific
+/public/videos/
+/key/
+/.github/
