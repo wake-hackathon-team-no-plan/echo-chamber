@@ -5,6 +5,7 @@ import { GoogleAuthProvider } from '../auth';
 const PROJECT_ID = 'sekairoscope';
 const LOCATION = 'us-central1';
 const MODEL = 'gemini-2.0-flash-lite-001';
+//const MODEL = 'gemini-2.5-pro-preview-05-06';
 const API_ENDPOINT = `https://${LOCATION}-aiplatform.googleapis.com/v1/projects/${PROJECT_ID}/locations/${LOCATION}/publishers/google/models/${MODEL}:generateContent`;
 
 /**
@@ -25,7 +26,11 @@ export class GeminiClient {
         contents: [{
           role: "user",
           parts: [{ text: prompt }]
-        }]
+        }],
+        generation_config: {
+          responseMimeType: 'application/json',
+          temperature: 0.7  // 適度な多様性を持たせる
+        }
       };
 
       console.log('Sending request to Gemini API:', {
@@ -43,22 +48,27 @@ export class GeminiClient {
         body: JSON.stringify(request),
       });
 
-      // レスポンスの処理
-      const responseText = await response.text();
-
+      // エラーレスポンスの確認
       if (!response.ok) {
-        console.error(`API error: ${response.status} ${response.statusText}`, responseText);
-        throw new Error(`API error: ${response.status} ${response.statusText}`);
-      }      try {
-        // JSONとして解析
-        const data: GeminiResponse = JSON.parse(responseText);
+        const errorText = await response.text();
+        console.error(`API error: ${response.status} ${response.statusText}`, errorText);
+        throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
+      }
+
+      try {
+        // JSONとして直接解析
+        const data: GeminiResponse = await response.json();
         console.log('API Response:', JSON.stringify(data, null, 2));
-        
-        
+
+        // レスポンスの検証
+        if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
+          throw new Error('Invalid API response format');
+        }
+
         return data.candidates[0].content.parts[0].text;
       } catch (parseError) {
         console.error('JSON解析エラー:', parseError);
-        throw new Error('APIレスポンスの解析に失敗しました');
+        throw new Error('APIレスポンスの解析に失敗しました: ' + (parseError instanceof Error ? parseError.message : String(parseError)));
       }
 
     } catch (error) {

@@ -6,8 +6,11 @@ import { generateMovie } from '../app/actions/generate-movie';
 
 export default function ApiTestForm() {
   // テキスト生成用の状態
-  const [input, setInput] = useState('');
-  const [textResult, setTextResult] = useState<string>('');
+  const [theme, setTheme] = useState('');
+  const [textResult, setTextResult] = useState<string[]>([]);
+  
+  // 定義されたテーマ一覧
+  const themes = ['家族', '教育', '旅行', '仕事', '健康', '環境', '友情', '恋愛'];
   
   // 動画生成用の状態
   const [prompt, setPrompt] = useState('');
@@ -28,10 +31,10 @@ export default function ApiTestForm() {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    setTextResult('');
+    setTextResult([]);
 
     try {
-      const response = await generateValuesText(input);
+      const response = await generateValuesText(theme);
       if ('error' in response) {
         setError(response.error);
       } else {
@@ -43,6 +46,11 @@ export default function ApiTestForm() {
     } finally {
       setIsLoading(false);
     }
+  };
+  
+  // テーマ選択のハンドラ
+  const handleThemeSelect = (selectedTheme: string) => {
+    setTheme(selectedTheme);
   };
 
   // 動画生成のハンドラ
@@ -83,33 +91,51 @@ export default function ApiTestForm() {
         <h2 className="text-2xl font-bold mb-4">価値観テキスト生成API テスト</h2>
         <form onSubmit={handleTextGeneration} className="space-y-4">
           <div>
-            <label htmlFor="input" className="block mb-2">
-              入力テキスト
+            <label className="block mb-2">
+              テーマを選択
             </label>
-            <textarea
-              id="input"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              className="w-full p-2 border rounded"
-              rows={4}
-              disabled={isLoading}
-            />
+            <div className="flex flex-wrap gap-2 mb-4">
+              {themes.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => handleThemeSelect(t)}
+                  className={`px-4 py-2 rounded ${
+                    theme === t
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-200 hover:bg-gray-300'
+                  }`}
+                  disabled={isLoading}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+            {theme && (
+              <div className="mt-2">
+                <p>選択中のテーマ: <strong>{theme}</strong></p>
+              </div>
+            )}
           </div>
 
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || !theme}
             className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-400"
           >
             {isLoading ? '生成中...' : 'テキスト生成'}
           </button>
         </form>
 
-        {textResult && (
+        {textResult.length > 0 && (
           <div className="mt-4">
             <h3 className="text-xl font-bold mb-2">生成結果:</h3>
-            <div className="p-4 bg-gray-100 rounded whitespace-pre-wrap">
-              {textResult}
+            <div className="space-y-2">
+              {textResult.map((value, index) => (
+                <div key={index} className="p-4 bg-gray-100 rounded">
+                  {value}
+                </div>
+              ))}
             </div>
           </div>
         )}

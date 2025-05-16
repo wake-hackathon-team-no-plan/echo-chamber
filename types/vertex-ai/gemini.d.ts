@@ -13,6 +13,8 @@ export interface GeminiRequestConfig {
     topK?: number;
     /** 最大出力トークン数 */
     maxOutputTokens?: number;
+    /** レスポンスのMIMEタイプ */
+    responseMimeType?: string;
   };
 }
 
