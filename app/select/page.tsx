@@ -3,96 +3,74 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { motion } from "framer-motion"
 import { ArrowRight } from "lucide-react"
-
-const topics = [
-  { id: 1, title: "政治", icon: "🏛️" },
-  { id: 2, title: "経済", icon: "💹" },
-  { id: 3, title: "環境問題", icon: "🌍" },
-  { id: 4, title: "テクノロジー", icon: "💻" },
-  { id: 5, title: "教育", icon: "🎓" },
-  { id: 6, title: "健康", icon: "🏥" },
-  { id: 7, title: "エンターテイメント", icon: "🎭" },
-  { id: 8, title: "スポーツ", icon: "⚽" },
-]
+import { TopicCard } from "@/components/feature/select/topic-card"
+import { useRandomTopics } from "@/components/feature/select/topics"
 
 export default function SelectPage() {
   const router = useRouter()
-  const [selectedTopics, setSelectedTopics] = useState<number[]>([])
+  const [selectedTopic, setSelectedTopic] = useState<number | null>(null)
+  const displayTopics = useRandomTopics(8) // 8つのトピックをランダムに取得
 
-  const toggleTopic = (id: number) => {
-    if (selectedTopics.includes(id)) {
-      setSelectedTopics(selectedTopics.filter((topicId) => topicId !== id))
+  const selectTopic = (id: number) => {
+    if (selectedTopic === id) {
+      setSelectedTopic(null)
     } else {
-      setSelectedTopics([...selectedTopics, id])
+      setSelectedTopic(id)
     }
   }
 
   const handleNext = () => {
-    if (selectedTopics.length > 0) {
-      // Store selected topics in localStorage for later use
-      localStorage.setItem("selectedTopics", JSON.stringify(selectedTopics))
+    if (selectedTopic !== null) {
+      // Store selected topic in localStorage for later use
+      localStorage.setItem("selectedTopics", JSON.stringify([selectedTopic]))
       router.push("/swipe")
     }
   }
 
   return (
-    <div className="min-h-screen pt-24">
-      {/* ハッシュタグパターン背景 */}
-      <div className="bg-gray-100 py-4 overflow-hidden">
-        <div className="hashtag-pattern flex">
-          <span className="hashtag-colored hashtag-blue">#SELECT</span>
-          <span>#TOPIC</span>
-          <span className="hashtag-colored hashtag-pink">#SELECT</span>
-          <span>#TOPIC</span>
-          <span className="hashtag-colored hashtag-green">#SELECT</span>
-          <span>#TOPIC</span>
-          <span className="hashtag-colored hashtag-orange">#SELECT</span>
-        </div>
-      </div>
-
-      <section className="py-16 bg-gray-100">
+    <div className="h-full bg-gray-100 overflow-y-auto">
+      <section className="h-full py-4">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-center mb-12"
+            className="text-center mb-6 px-4 max-w-2xl mx-auto"
+            data-testid="header-section"
           >
-            <h1 className="section-title">興味のあるテーマを選択</h1>
-            <p className="section-subtitle">あなたが知りたい・可視化したいテーマを選んでください</p>
+            <h1 className="text-2xl md:text-4xl font-bold mb-3 leading-tight">
+              <span className="inline-block">興味のある</span>{" "}
+              <span className="inline-block">テーマを選択</span>
+            </h1>
+            <p className="text-sm md:text-lg text-gray-600">
+              <span className="inline-block">あなたが知りたい・</span>{" "}
+              <span className="inline-block">可視化したいテーマを</span>{" "}
+              <span className="inline-block">選んでください</span>
+            </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-12">
-            {topics.map((topic) => (
-              <motion.div key={topic.id} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Card
-                  className={`cursor-pointer transition-all h-full ${
-                    selectedTopics.includes(topic.id)
-                      ? "border-4 border-[#3b7ff2] bg-[#3b7ff2]/10"
-                      : "border border-gray-200 hover:border-[#3b7ff2]/50"
-                  }`}
-                  onClick={() => toggleTopic(topic.id)}
-                >
-                  <CardContent className="flex flex-col items-center justify-center p-6 h-full">
-                    <span className="text-5xl mb-4">{topic.icon}</span>
-                    <h3 className="text-xl font-bold">{topic.title}</h3>
-                  </CardContent>
-                </Card>
-              </motion.div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-4xl mx-auto mb-6" data-testid="topics-grid">
+            {displayTopics.map((topic) => (
+              <TopicCard
+                key={topic.id}
+                topic={topic}
+                isSelected={selectedTopic === topic.id}
+                onToggle={selectTopic}
+              />
             ))}
           </div>
 
-          <div className="text-center">
+          <div className="text-center pb-4">
             <Button
               size="lg"
               onClick={handleNext}
-              disabled={selectedTopics.length === 0}
-              className="rounded-full bg-[#3b7ff2] hover:bg-[#3b7ff2]/90 px-8 py-6 text-lg font-bold"
+              disabled={selectedTopic === null}
+              className="rounded-full bg-[#3b7ff2] hover:bg-[#3b7ff2]/90 px-6 py-5 md:px-8 md:py-6 text-base md:text-lg font-bold"
+              data-testid="next-button"
             >
-              次へ進む ({selectedTopics.length} 選択中)
+              次へ進む
               <ArrowRight className="ml-2" />
             </Button>
           </div>
