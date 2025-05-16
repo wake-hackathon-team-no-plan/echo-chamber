@@ -12,11 +12,25 @@ const API_ENDPOINT = `https://${LOCATION}-aiplatform.googleapis.com/v1/projects/
  * Gemini APIクライアント
  */
 export class GeminiClient {
+  private useStub: boolean = false;
+
   constructor() {}
 
   /**
+   * スタブモードの切り替え
+   */
+  setUseStub(value: boolean): void {
+    this.useStub = value;
+  }
+
+  /**
    * テキストを生成する
-   */  async generateText(prompt: string): Promise<string> {
+   */
+  async generateText(prompt: string, options: { temperature?: number } = {}): Promise<string> {
+    if (this.useStub) {
+      console.log('Using stub implementation');
+      return "[\n  \"仕事って、結局のところ、何がしたいんだろうと悩む\",\n  \"成果が出ない日々、自分の無力さに打ちのめされる\",\n  \"周囲の期待に応えたいけど、プレッシャーも感じる\",\n  \"この仕事で、少しでも誰かの役に立てれば嬉しい\",\n  \"仕事を通して、自分自身を成長させたいと願う\"\n]";
+    }
     try {
       console.log('Authenticating with GCP...');
       const token = await GoogleAuthProvider.getAccessToken();
@@ -29,7 +43,7 @@ export class GeminiClient {
         }],
         generation_config: {
           responseMimeType: 'application/json',
-          temperature: 0.7  // 適度な多様性を持たせる
+          temperature: options.temperature ?? 0.7  // デフォルトは0.7
         }
       };
 

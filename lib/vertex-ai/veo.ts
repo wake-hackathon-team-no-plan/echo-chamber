@@ -13,7 +13,16 @@ const POLLING_ENDPOINT = `https://${LOCATION}-aiplatform.googleapis.com/v1/proje
  * Veo2 APIクライアント
  */
 export class VeoClient {
+  private useStub = false;
+
   constructor() {}
+
+  /**
+   * スタブモードの切り替え
+   */
+  setUseStub(use: boolean) {
+    this.useStub = use;
+  }
 
   /**
    * 動画を生成する
@@ -23,6 +32,10 @@ export class VeoClient {
     config: VeoGenerationConfig = {}
   ): Promise<string> {
     try {
+      // スタブモード時はダミーの動画パスを返す
+      if (this.useStub) {
+        return '/videos/sample.mp4';
+      }
       console.log('Authenticating with GCP...');
       const token = await GoogleAuthProvider.getAccessToken();
       console.log('Authentication successful');

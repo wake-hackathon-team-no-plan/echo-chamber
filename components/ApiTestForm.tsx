@@ -1,19 +1,22 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { generateValuesText } from '../app/actions/generate-values-text';
 import { generateMovie } from '../app/actions/generate-movie';
+import { getPromptTemplate } from '../app/actions/get-prompt-template';
 
 export default function ApiTestForm() {
   // テキスト生成用の状態
   const [theme, setTheme] = useState('');
   const [textResult, setTextResult] = useState<string[]>([]);
+  const [customPrompt, setCustomPrompt] = useState('');
+  const [temperature, setTemperature] = useState('0.7');
   
   // 定義されたテーマ一覧
-  const themes = ['家族', '教育', '旅行', '仕事', '健康', '環境', '友情', '恋愛'];
+  const themes = ['家族', '教育', '競争', '食', 'メディア', '環境', '友情', 'ジェンダー', '文化', '人種', '芸術', '動物', '幸福論', '政治'];
   
   // 動画生成用の状態
-  const [prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState("A whimsical 3D world floating in soft pink and lavender skies, with several cozy floating islands connected by glowing heart-shaped bridges. Each island represents a different aspect of family values. One island shows two characters far apart, yet connected by a glowing thread of light between their hearts. Another has a picnic scene where everyone is sitting freely, without fixed seats or roles, enjoying each other's presence. A third island has a giant ear-shaped sculpture surrounded by bubbles with dialogue icons, symbolizing listening and conversation. One area displays a playful, upside-down house with a sign that says “normal?”—questioning traditional ideas of family. The whole world is surrounded by floating pillows, blankets, and twinkling stars, creating a warm, relaxed atmosphere. No harsh lines, everything is soft, round, and magical.");
   const [width, setWidth] = useState('1024');
   const [height, setHeight] = useState('576');
   const [videoLength, setVideoLength] = useState('5');
@@ -26,6 +29,19 @@ export default function ApiTestForm() {
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // プロンプトテンプレートの読み込み
+  useEffect(() => {
+    const loadPromptTemplate = async () => {
+      try {
+        const template = await getPromptTemplate();
+        setCustomPrompt(template);
+      } catch (error) {
+        console.error('Error loading prompt template:', error);
+      }
+    };
+    loadPromptTemplate();
+  }, []);
+
   // テキスト生成のハンドラ
   const handleTextGeneration = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +50,11 @@ export default function ApiTestForm() {
     setTextResult([]);
 
     try {
-      const response = await generateValuesText(theme);
+      const response = await generateValuesText(
+        theme,
+        customPrompt || undefined,
+        parseFloat(temperature)
+      );
       if ('error' in response) {
         setError(response.error);
       } else {
@@ -116,6 +136,40 @@ export default function ApiTestForm() {
                 <p>選択中のテーマ: <strong>{theme}</strong></p>
               </div>
             )}
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="customPrompt" className="block mb-2">
+                カスタムプロンプト（オプション）
+              </label>
+              <textarea
+                id="customPrompt"
+                value={customPrompt}
+                onChange={(e) => setCustomPrompt(e.target.value)}
+                className="w-full p-2 border rounded"
+                rows={4}
+                placeholder="generate-values-text-prompt.txt"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="temperature" className="block mb-2">
+                Temperature
+              </label>
+              <input
+                type="number"
+                id="temperature"
+                value={temperature}
+                onChange={(e) => setTemperature(e.target.value)}
+                className="w-full p-2 border rounded"
+                min="0"
+                max="1"
+                step="0.01"
+                disabled={isLoading}
+              />
+            </div>
           </div>
 
           <button

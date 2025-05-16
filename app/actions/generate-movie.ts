@@ -24,12 +24,18 @@ export async function generateMovie(formData: FormData): Promise<{ videoPath: st
       motion_bucket: parseInt(formData.get('motionBucket') as string) || 127
     };
 
+    // スタブモードの切り替え
+    veoClient.setUseStub(true);
+
     // Veo2 APIを呼び出し
     const videoPath = await veoClient.generateVideo(prompt, config);
     return { videoPath };
 
   } catch (error) {
     console.error('Error in generateMovie:', error);
-    return { error: '動画生成中にエラーが発生しました' };
+    const errorMessage = error instanceof Error
+      ? `動画生成中にエラーが発生しました: ${error.message}`
+      : '動画生成中に不明なエラーが発生しました';
+    return { error: errorMessage };
   }
 }

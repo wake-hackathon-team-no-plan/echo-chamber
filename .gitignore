@@ -18,6 +18,7 @@
 .vercel
 
 # project specific
-/public/videos/
+/public/videos/*
+!/public/videos/sample.mp4
 /key/
 /.github/

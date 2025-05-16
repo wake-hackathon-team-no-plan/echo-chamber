@@ -9,7 +9,11 @@ import * as path from 'path';
  * @param theme 選択されたテーマ (例: "教育", "家族", "旅行" など)
  * @returns 5つの価値観文を含む配列、またはエラー情報
  */
-export async function generateValuesText(theme: string): Promise<{ text: string[] } | { error: string }> {
+export async function generateValuesText(
+  theme: string,
+  customPrompt?: string,
+  temperature: number = 0.7
+): Promise<{ text: string[] } | { error: string }> {
   try {
     // 入力の検証
     if (!theme || theme.trim().length === 0) {
@@ -20,16 +24,23 @@ export async function generateValuesText(theme: string): Promise<{ text: string[
     console.log('選択テーマ:', theme);
     
     // プロンプトの読み込み
-    const promptPath = path.join(process.cwd(), 'app', 'actions', 'prompts', 'generate-values-text-prompt.txt');
-    let promptTemplate = fs.readFileSync(promptPath, 'utf8');
-    
-    // プロンプト内のプレースホルダーを置換
-    const prompt = promptTemplate.replace(/\{theme\}/g, theme);
+    // プロンプトの処理
+    let prompt;
+    if (customPrompt) {
+      prompt = customPrompt.replace(/\{theme\}/g, theme);
+    } else {
+      const promptPath = path.join(process.cwd(), 'app', 'actions', 'prompts', 'generate-values-text-prompt.txt');
+      let promptTemplate = fs.readFileSync(promptPath, 'utf8');
+      prompt = promptTemplate.replace(/\{theme\}/g, theme);
+    }
     
     console.log('生成するプロンプト:', prompt);
 
+    // スタブモードに切り替え
+    geminiClient.setUseStub(true);
+
     // Gemini APIを呼び出してテキスト生成
-    const responseText = await geminiClient.generateText(prompt);
+    const responseText = await geminiClient.generateText(prompt, { temperature });
     console.log('生成テキスト取得:', responseText);
 
     let values: string[];
@@ -48,9 +59,9 @@ export async function generateValuesText(theme: string): Promise<{ text: string[
       console.error('不正な形式:', values);
       return { error: '価値観テキストの形式が不正です' };
     }
-    if (values.length !== 5) {
-      console.error('不正な価値観の数:', values);
-      return { error: '適切な数の価値観を生成できませんでした' };
+    if (values.length < 1) {
+      console.error('価値観が生成されていません:', values);
+      return { error: '価値観を生成できませんでした' };
     }
     if (!values.every(value => typeof value === 'string')) {
       console.error('文字列以外の値が含まれています:', values);
