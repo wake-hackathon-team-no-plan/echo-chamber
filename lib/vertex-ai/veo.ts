@@ -122,8 +122,7 @@ export class VeoClient {
           return result;
         }
 
-        // 進捗状況のログ出力
-        console.log(`Polling attempt ${attempt + 1}: ${result.metadata?.progressPercentage || 0}%`);
+        console.log(`Polling attempt ${attempt + 1}`);
 
         // 10秒待機
         await new Promise(resolve => setTimeout(resolve, 10000));

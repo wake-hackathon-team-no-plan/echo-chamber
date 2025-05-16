@@ -52,6 +52,4 @@ SNSやアルゴリズムによって自分の好みや価値観に合わせた�
     - gemini | Generative AI on Vertex AI
     https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini
 
-    - gemini 1.5 | Generative AI on Vertex AI
-    https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/send-chat-prompts-gemini?hl=ja#gemini-chat-samples-drest
 

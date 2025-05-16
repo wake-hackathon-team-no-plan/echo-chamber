@@ -19,6 +19,7 @@ export interface GeminiRequestConfig {
 export interface GeminiRequest extends GeminiRequestConfig {
   /** リクエストの内容 */
   contents: {
+    role?: string;
     parts: {
       text: string;
     }[];
