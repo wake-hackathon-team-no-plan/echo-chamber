@@ -1,0 +1,320 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 346 100% 58%;
+    --primary-foreground: 355.7 100% 97.3%;
+    --secondary: 240 100% 50%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 346 100% 58%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 20 14.3% 4.1%;
+    --foreground: 0 0% 95%;
+    --card: 24 9.8% 10%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 346 100% 58%;
+    --primary-foreground: 355.7 100% 97.3%;
+    --secondary: 240 100% 50%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 12 6.5% 15.1%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 85.7% 97.3%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 346 100% 58%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* カラーテーマ */
+.theme-pink {
+  background-color: #ff5c8d;
+  color: white;
+}
+
+.theme-blue {
+  background-color: #3b7ff2;
+  color: white;
+}
+
+.theme-orange {
+  background-color: #ff6347;
+  color: white;
+}
+
+.theme-yellow {
+  background-color: #ffba08;
+  color: white;
+}
+
+.theme-green {
+  background-color: #00c896;
+  color: white;
+}
+
+/* 特徴的なタイポグラフィ */
+.display-time {
+  font-size: 5rem;
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.display-date {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ハッシュタグスタイル */
+.hashtag {
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  color: white;
+  -webkit-text-stroke: 2px #000;
+  text-stroke: 2px #000;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.hashtag-pattern {
+  font-size: 4rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  color: white;
+  -webkit-text-stroke: 2px #000;
+  text-stroke: 2px #000;
+  opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.hashtag-colored {
+  display: inline-block;
+  padding: 0 5px;
+}
+
+.hashtag-pink {
+  background-color: #ff5c8d;
+}
+
+.hashtag-blue {
+  background-color: #3b7ff2;
+}
+
+.hashtag-orange {
+  background-color: #ff6347;
+}
+
+.hashtag-yellow {
+  background-color: #ffba08;
+}
+
+.hashtag-green {
+  background-color: #00c896;
+}
+
+/* スワイプカードのスタイル更新 - マッチングアプリ風 */
+@keyframes swipeRight {
+  from {
+    transform: translateX(0) rotate(0);
+  }
+  to {
+    transform: translateX(150%) rotate(30deg);
+    opacity: 0;
+  }
+}
+
+@keyframes swipeLeft {
+  from {
+    transform: translateX(0) rotate(0);
+  }
+  to {
+    transform: translateX(-150%) rotate(-30deg);
+    opacity: 0;
+  }
+}
+
+.swipe-card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-origin: center;
+  cursor: grab;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  will-change: transform;
+}
+
+.swipe-card.swiping {
+  transition: none;
+  cursor: grabbing;
+}
+
+.swipe-card.swiped-left {
+  animation: swipeLeft 0.5s forwards;
+}
+
+.swipe-card.swiped-right {
+  animation: swipeRight 0.5s forwards;
+}
+
+/* ワードクラウドのスタイル更新 */
+.word-cloud-container {
+  position: relative;
+  width: 100%;
+  height: 400px;
+}
+
+.word-cloud-word {
+  position: absolute;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.word-cloud-word:hover {
+  transform: scale(1.1);
+  z-index: 20;
+}
+
+/* アニメーションスタイル */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* ナビゲーション */
+.nav-link {
+  position: relative;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: currentColor;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* セクションスタイル */
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin-bottom: 1rem;
+  line-height: 1.1;
+}
+
+.section-subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  opacity: 0.8;
+}
+
+/* カード */
+.feature-card {
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* 値の円 */
+.value-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  position: relative;
+}
+
+.value-circle::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border-radius: 50%;
+  background-color: white;
+}
+
+.value-circle-content {
+  position: relative;
+  z-index: 1;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* 視点選択カード */
+.perspective-card {
+  transition: all 0.3s ease;
+}
+
+.perspective-card:hover {
+  transform: translateY(-5px);
+}
