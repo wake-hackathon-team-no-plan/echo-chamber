@@ -318,3 +318,12 @@
 .perspective-card:hover {
   transform: translateY(-5px);
 }
+
+/* プログレスバーのカスタマイズ */
+.video-light-theme::-webkit-media-controls-timeline {
+  background-color: #ffba08;
+}
+
+.video-dark-theme::-webkit-media-controls-timeline {
+  background-color: #00c896;
+}
