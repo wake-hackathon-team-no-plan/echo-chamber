@@ -100,7 +100,7 @@ export default function SwipePage() {
   const isCompleted = currentIndex >= cards.length
 
   return (
-    <div className="min-h-screen pt-16 md:pt-24 overflow-x-hidden">
+    <div className="h-full bg-gray-100 overflow-y-auto">
       {/* ローディングオーバーレイ */}
       {isGenerating && (
         <LoadingOverlay message="AIが視点を生成中..." />
@@ -111,7 +111,7 @@ export default function SwipePage() {
         <TutorialPopup onClose={() => setShowTutorial(false)} />
       )}
 
-      <section className="py-6 sm:py-10 md:py-16 bg-gray-100 w-full">
+      <section className="h-full py-4">
         <div className="container mx-auto px-4 max-w-screen-lg">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
