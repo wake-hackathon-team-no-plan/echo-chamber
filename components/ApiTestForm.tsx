@@ -11,7 +11,7 @@ export default function ApiTestForm() {
   const [theme, setTheme] = useState('');
   const [textResult, setTextResult] = useState<string[]>([]);
   const [customPrompt, setCustomPrompt] = useState('');
-  const [temperature, setTemperature] = useState('0.7');
+  const [temperature, setTemperature] = useState('1.0');
   
   // 定義されたテーマ一覧
   const themes = ['家族', '教育', '競争', '食', 'メディア', '環境', '友情', 'ジェンダー', '文化', '人種', '芸術', '動物', '幸福論', '政治'];
@@ -45,13 +45,9 @@ export default function ApiTestForm() {
   const [resultPrompt, setResultPrompt] = useState('');
   
   // 動画生成用の状態
-  const [prompt, setPrompt] = useState("A whimsical 3D world floating in soft pink and lavender skies, with several cozy floating islands connected by glowing heart-shaped bridges. Each island represents a different aspect of family values. One island shows two characters far apart, yet connected by a glowing thread of light between their hearts. Another has a picnic scene where everyone is sitting freely, without fixed seats or roles, enjoying each other's presence. A third island has a giant ear-shaped sculpture surrounded by bubbles with dialogue icons, symbolizing listening and conversation. One area displays a playful, upside-down house with a sign that says “normal?”—questioning traditional ideas of family. The whole world is surrounded by floating pillows, blankets, and twinkling stars, creating a warm, relaxed atmosphere. No harsh lines, everything is soft, round, and magical.");
-  const [width, setWidth] = useState('1024');
-  const [height, setHeight] = useState('576');
+  const [prompt, setPrompt] = useState(`A whimsical 3D world floating in soft pink and lavender skies, with several cozy floating islands connected by glowing heart-shaped bridges. Each island represents a different aspect of family values. One island shows two characters far apart, yet connected by a glowing thread of light between their hearts. Another has a picnic scene where everyone is sitting freely, without fixed seats or roles, enjoying each other's presence. A third island has a giant ear-shaped sculpture surrounded by bubbles with dialogue icons, symbolizing listening and conversation. One area displays a playful, upside-down house with a sign that says "normal?"—questioning traditional ideas of family. The whole world is surrounded by floating pillows, blankets, and twinkling stars, creating a warm, relaxed atmosphere. No harsh lines, everything is soft, round, and magical.`);
   const [videoLength, setVideoLength] = useState('5');
-  const [seed, setSeed] = useState('');
-  const [guidanceScale, setGuidanceScale] = useState('5.0');
-  const [motionBucket, setMotionBucket] = useState('127');
+  const [aspectRatio, setAspectRatio] = useState('16:9');
   const [videoPath, setVideoPath] = useState<string>('');
   
   // 共通の状態
@@ -140,16 +136,11 @@ export default function ApiTestForm() {
     setVideoPath('');
 
     try {
-      const formData = new FormData();
-      formData.append('prompt', prompt);
-      formData.append('width', width);
-      formData.append('height', height);
-      formData.append('videoLength', videoLength);
-      formData.append('seed', seed);
-      formData.append('guidanceScale', guidanceScale);
-      formData.append('motionBucket', motionBucket);
-
-      const response = await generateMovie(formData);
+      const response = await generateMovie(
+        prompt,
+        parseInt(videoLength),
+        aspectRatio as "16:9" | "9:16"
+      );
       if ('error' in response) {
         setError(response.error);
       } else {
@@ -224,7 +215,7 @@ export default function ApiTestForm() {
                 onChange={(e) => setTemperature(e.target.value)}
                 className="w-full p-2 border rounded"
                 min="0"
-                max="1"
+                max="2"
                 step="0.01"
                 disabled={isLoading}
               />
@@ -292,7 +283,7 @@ export default function ApiTestForm() {
               onChange={(e) => setTemperature(e.target.value)}
               className="w-full p-2 border rounded"
               min="0"
-              max="1"
+              max="2"
               step="0.01"
               disabled={isLoading}
             />
@@ -337,36 +328,8 @@ export default function ApiTestForm() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="width" className="block mb-2">
-                幅
-              </label>
-              <input
-                type="number"
-                id="width"
-                value={width}
-                onChange={(e) => setWidth(e.target.value)}
-                className="w-full p-2 border rounded"
-                disabled={isLoading}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="height" className="block mb-2">
-                高さ
-              </label>
-              <input
-                type="number"
-                id="height"
-                value={height}
-                onChange={(e) => setHeight(e.target.value)}
-                className="w-full p-2 border rounded"
-                disabled={isLoading}
-              />
-            </div>
-
-            <div>
               <label htmlFor="videoLength" className="block mb-2">
-                動画の長さ（秒）
+                動画の長さ（5～8秒）
               </label>
               <input
                 type="number"
@@ -374,52 +337,27 @@ export default function ApiTestForm() {
                 value={videoLength}
                 onChange={(e) => setVideoLength(e.target.value)}
                 className="w-full p-2 border rounded"
-                disabled={isLoading}
+                min="5"
+                max="8"
                 step="1"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="seed" className="block mb-2">
-                シード値（オプション）
-              </label>
-              <input
-                type="number"
-                id="seed"
-                value={seed}
-                onChange={(e) => setSeed(e.target.value)}
-                className="w-full p-2 border rounded"
                 disabled={isLoading}
               />
             </div>
 
             <div>
-              <label htmlFor="guidanceScale" className="block mb-2">
-                ガイダンススケール
+              <label htmlFor="aspectRatio" className="block mb-2">
+                アスペクト比
               </label>
-              <input
-                type="number"
-                id="guidanceScale"
-                value={guidanceScale}
-                onChange={(e) => setGuidanceScale(e.target.value)}
+              <select
+                id="aspectRatio"
+                value={aspectRatio}
+                onChange={(e) => setAspectRatio(e.target.value)}
                 className="w-full p-2 border rounded"
                 disabled={isLoading}
-                step="0.1"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="motionBucket" className="block mb-2">
-                モーションバケット
-              </label>
-              <input
-                type="number"
-                id="motionBucket"
-                value={motionBucket}
-                onChange={(e) => setMotionBucket(e.target.value)}
-                className="w-full p-2 border rounded"
-                disabled={isLoading}
-              />
+              >
+                <option value="16:9">16:9</option>
+                <option value="9:16">9:16</option>
+              </select>
             </div>
           </div>
 

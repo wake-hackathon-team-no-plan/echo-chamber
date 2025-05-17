@@ -2,23 +2,7 @@
  * Gemini APIのリクエスト・レスポンス型定義
  */
 
-export interface GeminiRequestConfig {
-  /** テキスト生成の設定 */
-  generation_config?: {
-    /** 生成の多様性（0.0-1.0） */
-    temperature?: number;
-    /** 上位確率でのサンプリング（0.0-1.0） */
-    topP?: number;
-    /** 上位k個の候補から選択 */
-    topK?: number;
-    /** 最大出力トークン数 */
-    maxOutputTokens?: number;
-    /** レスポンスのMIMEタイプ */
-    responseMimeType?: string;
-  };
-}
-
-export interface GeminiRequest extends GeminiRequestConfig {
+export interface GeminiRequest {
   /** リクエストの内容 */
   contents: {
     role?: string;
@@ -26,6 +10,13 @@ export interface GeminiRequest extends GeminiRequestConfig {
       text: string;
     }[];
   }[];
+  /** テキスト生成の設定 */
+  generation_config?: {
+    /** 生成の多様性（0.0-2.0） */
+    temperature?: number;
+    /** レスポンスのMIMEタイプ */
+    responseMimeType?: string;
+  };
 }
 
 export interface GeminiResponse {

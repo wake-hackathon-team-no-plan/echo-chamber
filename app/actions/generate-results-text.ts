@@ -58,7 +58,7 @@ export async function generateResultsText(
     geminiClient.setUseStub(true);
 
     // Gemini APIを呼び出してプロンプト生成
-    const responseText = await geminiClient.generateText(prompt, { temperature });
+    const responseText = await geminiClient.generateText(prompt, temperature);
     console.log('生成テキスト取得:', responseText);
 
     let resultJson: { prompt: string };

@@ -1,38 +1,38 @@
 'use server'
 
 import { veoClient } from '../../lib/vertex-ai/veo';
-import { VeoGenerationConfig } from '../../types/vertex-ai/veo';
 
 /**
  * 動画を生成するServer Action
+ * @param prompt [必須] 動画生成のプロンプト
+ * @param durationSeconds [任意] 動画の長さ（秒、5～8秒）、デフォルト: 5秒
+ * @param aspectRatio [任意] アスペクト比（16:9または9:16）、デフォルト: 16:9
+ * @returns 動画のパスまたはエラー情報
  */
-export async function generateMovie(formData: FormData): Promise<{ videoPath: string } | { error: string }> {
+export async function generateMovie(
+  prompt: string,
+  durationSeconds: number = 5.0,
+  aspectRatio: "16:9" | "9:16" = "16:9"
+): Promise<{ videoPath: string } | { error: string }> {
   try {
-    // プロンプトの取得と検証
-    const prompt = formData.get('prompt') as string;
+    // プロンプトの検証
     if (!prompt || prompt.trim().length === 0) {
       return { error: 'プロンプトを入力してください' };
     }
 
-    // オプションパラメータの取得
-    const config: VeoGenerationConfig = {
-      width: parseInt(formData.get('width') as string) || 1024,
-      height: parseInt(formData.get('height') as string) || 576,
-      video_length: parseFloat(formData.get('videoLength') as string) || 4.0,
-      seed: parseInt(formData.get('seed') as string) || undefined,
-      guidance_scale: parseFloat(formData.get('guidanceScale') as string) || 5.0,
-      motion_bucket: parseInt(formData.get('motionBucket') as string) || 127
-    };
+    console.log(`【動画生成】INPUT: プロンプト="${prompt}"`);
 
     // スタブモードの切り替え
     veoClient.setUseStub(true);
 
     // Veo2 APIを呼び出し
-    const videoPath = await veoClient.generateVideo(prompt, config);
+    const videoPath = await veoClient.generateVideo(prompt, durationSeconds, aspectRatio);
+    console.log(`【動画生成】OUTPUT: 動画生成完了 - ${videoPath}`);
+
     return { videoPath };
 
   } catch (error) {
-    console.error('Error in generateMovie:', error);
+    console.error(`【動画生成】ERROR: ${error instanceof Error ? error.message : '不明なエラー'}`);
     const errorMessage = error instanceof Error
       ? `動画生成中にエラーが発生しました: ${error.message}`
       : '動画生成中に不明なエラーが発生しました';

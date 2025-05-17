@@ -1,4 +1,4 @@
-import { VeoRequest, VeoResponse, VeoOperationResponse, VeoGenerationConfig } from '../../types/vertex-ai/veo';
+import { VeoRequest, VeoResponse, VeoOperationResponse } from '../../types/vertex-ai/veo';
 import * as fs from 'fs-extra';
 import path from 'path';
 import { GoogleAuthProvider } from '../auth';
@@ -29,7 +29,8 @@ export class VeoClient {
    */
   async generateVideo(
     prompt: string,
-    config: VeoGenerationConfig = {}
+    durationSeconds: number,
+    aspectRatio?: string
   ): Promise<string> {
     try {
       // スタブモード時はダミーの動画パスを返す
@@ -43,17 +44,11 @@ export class VeoClient {
       // APIリクエストの構築
       const request: VeoRequest = {
         instances: [{
-          prompt,
-          negative_prompt: config.guidance_scale ? 'low quality, bad quality' : undefined
+          prompt
         }],
         parameters: {
-          negativePrompt: config.guidance_scale ? 'low quality, bad quality' : undefined,
-          seed: config.seed,
-          durationSeconds: config.video_length || 4.0,
-          aspectRatio: config.width && config.height ? 
-            (config.width > config.height ? '16:9' : '9:16') : 
-            '16:9',
-          enhancePrompt: true
+          durationSeconds,
+          aspectRatio
         }
       };
 
@@ -129,9 +124,6 @@ export class VeoClient {
         const result: VeoOperationResponse = await response.json();
         
         if (result.done) {
-          if (result.error) {
-            throw new Error(result.error.message || '操作がエラーで終了しました');
-          }
           return result;
         }
 

@@ -1,6 +1,6 @@
-
+# generation_requirements
 You are a creative question designer for a project called “Sekairoscope,” an app that visualizes different value systems.
-Please generate 10 thought-provoking value-based statements related to the following theme: {insert theme here}.
+Please generate 10 thought-provoking value-based statements related to the following theme: {theme}.
 Each statement should reflect a unique or contrasting worldview.
 Avoid obvious or generic phrasing. Use clear, bold expressions that can evoke emotional reactions (agreement or disagreement).
 The goal is to encourage the user to reflect on their own beliefs.
@@ -10,10 +10,10 @@ Make sure the 10 statements:
 	•	Sound natural and conversational (not academic)
 	•	Are written in a declarative tone (e.g. “I believe…” or “It’s true that…” is OK)
 	•	Are no longer than 25 words each
-Theme example (for reference): “Money”, “Education”, “Love”, “Success”, “Technology”, “Creativity”, etc.
 
-Output Format and Rules
-The output must be in JSON format.
+# Output Format and Rules
+- Please answer in Japanese.
+- The output must be in JSON format.
 
 Following the above conditions, generate a JSON that strictly adheres to the JSON Schema below by creating sentences that express values related to the theme.
 
@@ -24,11 +24,11 @@ JSON Schema:
   "items": {
     "type": "string"
   },
-  "minItems": 5,
+  "minItems": 10,
   "maxItems": 10,
   "description": "An array of sentences expressing values related to the theme"
 }
 
 The final response must only contain the JSON array starting with "[" and ending with "]", and no other characters outside the JSON.
 
-Please answer in Japanese.
+JSON:
