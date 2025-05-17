@@ -19,11 +19,13 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ja" suppressHydrationWarning>
-      <body className={inter.className}>
+    <html lang="ja" className="h-full" suppressHydrationWarning>
+      <body className={`${inter.className} overflow-x-hidden overscroll-none h-full`}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          <Navigation />
-          <main>{children}</main>
+          <div className="grid grid-rows-[auto_1fr] h-full">
+            <Navigation />
+            <main>{children}</main>
+          </div>
         </ThemeProvider>
       </body>
     </html>
