@@ -9,9 +9,15 @@ export default function PerspectivePage() {
   const router = useRouter()
 
   const handleSelectPerspective = (perspective: "user" | "opposite") => {
-    // 選択した視点をローカルストレージに保存
+    // 選択した視点を localStorageに保存
     localStorage.setItem("selectedPerspective", perspective)
     router.push("/result")
+
+    // rm later　‼️
+    // ✅ 動画パスもセット
+    // ✅ 注意: 一時的なデモ用のコードです。実際には Swipe の結果に基づいて動画パスが生成 ~ localStorage には保存されている想定
+    localStorage.setItem("userVideoPath", "/videos/sample.mp4")
+    localStorage.setItem("oppositeVideoPath", "/videos/sampleOpposite.mp4")
   }
 
   return (

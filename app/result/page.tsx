@@ -10,7 +10,6 @@ import { Share2 } from "lucide-react"
 import WordCloud from "@/components/feature/word-cloud"
 import VideoPlayer from "@/components/feature/video-player"
 import { sampleAnalysisData } from "@/components/feature/result/sampleAnalysisData"
-import { generateMovie } from "../actions/generate-movie"
 
 
 export default function ResultPage() {
@@ -22,53 +21,53 @@ export default function ResultPage() {
   const [userVideoUrl, setUserVideoUrl] = useState("")
   const [oppositeVideoUrl, setOppositeVideoUrl] = useState("")
 
-  console.log("userVideoUrl", userVideoUrl)
-
   useEffect(() => {
-    // ローカルストレージから選択された視点を取得
+    // localStorage から選択された視点を取得
     const storedPerspective = localStorage.getItem("selectedPerspective")
     if (storedPerspective) {
       setActiveTab(storedPerspective)
     }
 
-// API から分析結果とビデオを取得
-    const fetchData = async () => {
+    // localStorage から動画URLを取得
+    // ✅ TODO: key は仮で設定
+    const userVideoFromStorage = localStorage.getItem("userVideoPath");
+    const oppositeVideoFromStorage = localStorage.getItem("oppositeVideoPath");
+
+    // 取得したパスがあれば状態にセット
+    if (userVideoFromStorage && oppositeVideoFromStorage) {
+    setUserVideoUrl(userVideoFromStorage);
+    setOppositeVideoUrl(oppositeVideoFromStorage);
+
+    // 分析データ取得（サンプルデータを使用）
+    const fetchAnalysisOnly = async () => {
       try {
-        // 分析データを取得（今はサンプルデータを使用）
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-        setAnalysisData(sampleAnalysisData)
-
-        // ユーザー視点のビデオを生成・取得
-        const userFormData = new FormData();
-        userFormData.append('prompt', "A whimsical 3D world representing user perspective");
-        // 他の必要なパラメータをセット
-        const userVideoResponse = await generateMovie(userFormData);
-        if (!('error' in userVideoResponse)) {
-          setUserVideoUrl(userVideoResponse.videoPath);
-        }
-
-        setOppositeVideoUrl("/videos/sampleOpposite.mp4")
-        // 異なる視点のビデオを生成・取得
-        // const oppositeFormData = new FormData();
-        // oppositeFormData.append('prompt', "A contrasting 3D world representing opposite perspective");
-        // // 他の必要なパラメータをセット
-        // const oppositeVideoResponse = await generateMovie(oppositeFormData);
-        // if (!('error' in oppositeVideoResponse)) {
-        //   setOppositeVideoUrl(oppositeVideoResponse.videoPath);
-        // }
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setAnalysisData(sampleAnalysisData);
       } catch (error) {
-        console.error("Failed to fetch data:", error)
+        console.error("Failed to fetch analysis data:", error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchData()
+    fetchAnalysisOnly();
+  } else {
+    // 開発用: ローカルストレージに動画URLがない場合の処理
+    // 本番環境では、ここでエラーを表示するか前のページにリダイレクト
+    console.error("Video URLs not found in localStorage");
+    setIsLoading(false);
+
+    // サンプルデータを使用して表示（開発用）
+    setAnalysisData(sampleAnalysisData);
+
+    // 開発用メッセージ
+    console.warn("開発用: 動画URLがローカルストレージにありません。本番環境ではエラーになります。");
+  }
 
   }, [])
 
-  console.log("userVideoUrl", userVideoUrl)
-  console.log("oppositeVideoUrl", oppositeVideoUrl)
+  console.log("userVideoUrl", userVideoUrl) // ✅ rm later　‼️
+  console.log("oppositeVideoUrl", oppositeVideoUrl) // ✅ rm later　‼️
 
   const handleKeywordClick = (keyword: any) => {
     setSelectedKeyword(keyword)
