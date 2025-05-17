@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { generateValuesText } from '../app/actions/generate-values-text';
 import { generateMovie } from '../app/actions/generate-movie';
 import { getPromptTemplate } from '../app/actions/get-prompt-template';
+import { generateResultsText, Viewpoint } from '../app/actions/generate-results-text';
 
 export default function ApiTestForm() {
   // テキスト生成用の状態
@@ -14,6 +15,34 @@ export default function ApiTestForm() {
   
   // 定義されたテーマ一覧
   const themes = ['家族', '教育', '競争', '食', 'メディア', '環境', '友情', 'ジェンダー', '文化', '人種', '芸術', '動物', '幸福論', '政治'];
+  
+  // 結果プロンプト生成用の状態
+  const defaultViewpoints: Viewpoint[] = [
+    {
+      viewpoint: "距離があっても心はそばに",
+      resonates: true
+    },
+    {
+      viewpoint: "役割じゃなくて関係性でいたい",
+      resonates: false
+    },
+    {
+      viewpoint: "感謝より、まず対話がほしい",
+      resonates: true
+    },
+    {
+      viewpoint: "心地よさがルールになる家庭が理想",
+      resonates: true
+    },
+    {
+      viewpoint: "新しい家族の形、どんどんあり！",
+      resonates: false
+    }
+  ];
+  
+  const [resultTheme, setResultTheme] = useState('家族');
+  const [viewpoints, setViewpoints] = useState<Viewpoint[]>(defaultViewpoints);
+  const [resultPrompt, setResultPrompt] = useState('');
   
   // 動画生成用の状態
   const [prompt, setPrompt] = useState("A whimsical 3D world floating in soft pink and lavender skies, with several cozy floating islands connected by glowing heart-shaped bridges. Each island represents a different aspect of family values. One island shows two characters far apart, yet connected by a glowing thread of light between their hearts. Another has a picnic scene where everyone is sitting freely, without fixed seats or roles, enjoying each other's presence. A third island has a giant ear-shaped sculpture surrounded by bubbles with dialogue icons, symbolizing listening and conversation. One area displays a playful, upside-down house with a sign that says “normal?”—questioning traditional ideas of family. The whole world is surrounded by floating pillows, blankets, and twinkling stars, creating a warm, relaxed atmosphere. No harsh lines, everything is soft, round, and magical.");
@@ -71,6 +100,36 @@ export default function ApiTestForm() {
   // テーマ選択のハンドラ
   const handleThemeSelect = (selectedTheme: string) => {
     setTheme(selectedTheme);
+  };
+
+  // 結果プロンプト生成のハンドラ
+  const handleResultGeneration = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+    setResultPrompt('');
+
+    try {
+      const response = await generateResultsText(
+        resultTheme,
+        viewpoints,
+        undefined,  // カスタムプロンプトは使わない
+        parseFloat(temperature)
+      );
+      
+      if ('error' in response) {
+        setError(response.error);
+      } else {
+        setResultPrompt(response.prompt);
+        // 生成したプロンプトを動画生成用のプロンプトにセット
+        setPrompt(response.prompt);
+      }
+    } catch (err) {
+      setError('エラーが発生しました');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // 動画生成のハンドラ
@@ -190,6 +249,69 @@ export default function ApiTestForm() {
                   {value}
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 結果プロンプト生成フォーム */}
+      <div className="border p-4 rounded">
+        <h2 className="text-2xl font-bold mb-4">結果プロンプト生成API テスト</h2>
+        <form onSubmit={handleResultGeneration} className="space-y-4">
+          <div>
+            <label className="block mb-2">
+              テーマ（固定）
+            </label>
+            <div className="p-2 bg-gray-100 rounded">
+              {resultTheme}
+            </div>
+          </div>
+
+          <div>
+            <label className="block mb-2">
+              価値観（固定）
+            </label>
+            <div className="space-y-2">
+              {viewpoints.map((vp, index) => (
+                <div key={index} className={`p-2 rounded flex justify-between ${vp.resonates ? "bg-green-100" : "bg-red-100"}`}>
+                  <span>{vp.viewpoint}</span>
+                  <span>{vp.resonates ? "共感する" : "共感しない"}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="resultTemperature" className="block mb-2">
+              Temperature
+            </label>
+            <input
+              type="number"
+              id="resultTemperature"
+              value={temperature}
+              onChange={(e) => setTemperature(e.target.value)}
+              className="w-full p-2 border rounded"
+              min="0"
+              max="1"
+              step="0.01"
+              disabled={isLoading}
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-400"
+          >
+            {isLoading ? '生成中...' : 'プロンプト生成'}
+          </button>
+        </form>
+
+        {resultPrompt && (
+          <div className="mt-4">
+            <h3 className="text-xl font-bold mb-2">生成結果:</h3>
+            <div className="p-4 bg-gray-100 rounded whitespace-pre-wrap">
+              {resultPrompt}
             </div>
           </div>
         )}
