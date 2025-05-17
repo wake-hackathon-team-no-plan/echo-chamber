@@ -1,17 +1,17 @@
 /**
- * トピックデータの定義
+ * テーマデータの定義
  */
 "use client"  // クライアント側でランダム選択を行うために追加
 import { useEffect, useState } from "react"
 
-export type Topic = {
+export type Theme = {
   id: number
   title: string
   iconName: string
 }
 
-// Material Icons風の名前を使用したトピック定義
-export const allTopics: Topic[] = [
+// Material Icons風の名前を使用したテーマ定義
+export const allThemes: Theme[] = [
   { id: 1, title: "政治", iconName: "AccountBalance" },
   { id: 2, title: "経済", iconName: "TrendingUp" },
   { id: 3, title: "環境問題", iconName: "EcoOutlined" },
@@ -34,19 +34,19 @@ export const allTopics: Topic[] = [
   { id: 20, title: "SNS", iconName: "ConnectWithoutContact" },
 ]
 
-// 初期表示用に最初の8トピックを返す
+// 初期表示用に最初の8テーマを返す
 // サーバーサイドレンダリングで使用される
-export const topics = allTopics.slice(0, 8)
+export const themes = allThemes.slice(0, 8)
 
-// ランダムにトピックを選択するカスタムフック
-export function useRandomTopics(count: number = 8): Topic[] {
-  const [randomTopics, setRandomTopics] = useState<Topic[]>(topics)
+// ランダムにテーマを選択するカスタムフック
+export function useRandomThemes(count: number = 8): Theme[] {
+  const [randomThemes, setRandomThemes] = useState<Theme[]>(themes)
 
   useEffect(() => {
     // クライアントサイドでのみランダム選択を実行
-    const shuffled = [...allTopics].sort(() => 0.5 - Math.random())
-    setRandomTopics(shuffled.slice(0, count))
+    const shuffled = [...allThemes].sort(() => 0.5 - Math.random())
+    setRandomThemes(shuffled.slice(0, count))
   }, [count])
 
-  return randomTopics
+  return randomThemes
 }

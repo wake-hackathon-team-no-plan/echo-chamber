@@ -221,9 +221,10 @@ export default function ResultPage() {
 
   const handleRestart = () => {
     // ローカルストレージをクリアして最初から始める
-    localStorage.removeItem("selectedTopics")
+    localStorage.removeItem("selectedThemes")
     localStorage.removeItem("responses")
     localStorage.removeItem("selectedPerspective")
+    localStorage.removeItem("generatedCards")
     router.push("/")
   }
 

@@ -10,8 +10,8 @@ import { motion, AnimatePresence } from "framer-motion"
 import { ArrowLeft, ArrowRight, X, Check, Heart } from "lucide-react"
 
 // 選択したテーマに基づいた質問カード
-const generateCards = (topics: number[]) => {
-  // 実際の実装ではAPIからトピックに基づいたカードを取得
+const generateCards = (themes: number[]) => {
+  // サンプルカードの定義（フォールバック用）
   const sampleCards = [
     {
       id: 1,
@@ -65,13 +65,32 @@ const generateCards = (topics: number[]) => {
     },
   ]
 
-  // 選択されたトピックに関連するカードのみをフィルタリング
-  // 少なくとも5枚のカードを確保
-  const filteredCards = sampleCards.filter((card) => topics.includes(card.category))
-  if (filteredCards.length < 5) {
-    return sampleCards.slice(0, 10)
+  // デフォルトのカードセット（最小限必要なカードを確保）
+  const defaultCards = sampleCards.slice(0, 5);
+
+  try {
+    // localStorage から生成されたカードを取得
+    const storedCards = localStorage.getItem("generatedCards")
+    
+    if (storedCards) {
+      return JSON.parse(storedCards)
+    }
+    
+    // 生成されたカードがない場合は、サンプルカードをフィルタリング
+    // 選択されたテーマに関連するカードのみをフィルタリング
+    const filteredCards = sampleCards.filter((card) => themes.includes(card.category))
+    
+    // 少なくとも5枚のカードを確保
+    if (filteredCards.length < 5) {
+      return sampleCards.slice(0, 10)
+    }
+    
+    return filteredCards
+  } catch (error) {
+    console.error("カード生成エラー:", error)
+    // エラー時はデフォルトのカードセットを返す
+    return defaultCards
   }
-  return filteredCards
 }
 
 export default function SwipePage() {
@@ -90,14 +109,14 @@ export default function SwipePage() {
   const [showDislikeIndicator, setShowDislikeIndicator] = useState(false)
 
   useEffect(() => {
-    // ローカルストレージから選択されたトピックを取得
-    const storedTopics = localStorage.getItem("selectedTopics")
-    if (storedTopics) {
-      const topics = JSON.parse(storedTopics)
-      const generatedCards = generateCards(topics)
+    // ローカルストレージから選択されたテーマを取得
+    const storedThemes = localStorage.getItem("selectedThemes")
+    if (storedThemes) {
+      const themes = JSON.parse(storedThemes)
+      const generatedCards = generateCards(themes)
       setCards(generatedCards)
     } else {
-      // トピックが選択されていない場合は選択画面に戻る
+      // テーマが選択されていない場合は選択画面に戻る
       router.push("/select")
     }
   }, [router])

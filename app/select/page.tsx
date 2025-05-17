@@ -4,28 +4,58 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
-import { ArrowRight } from "lucide-react"
-import { TopicCard } from "@/components/feature/select/topic-card"
-import { useRandomTopics } from "@/components/feature/select/topics"
+import { ArrowRight, Loader2 } from "lucide-react"
+import { ThemeCard } from "@/components/feature/select/theme-card"
+import { useRandomThemes, allThemes } from "@/components/feature/select/themes"
+import { generateValuesText } from "@/app/actions/generate-values-text"
 
 export default function SelectPage() {
   const router = useRouter()
-  const [selectedTopic, setSelectedTopic] = useState<number | null>(null)
-  const displayTopics = useRandomTopics(8) // 8つのトピックをランダムに取得
+  const [selectedTheme, setSelectedTheme] = useState<number | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const displayThemes = useRandomThemes(8) // 8つのテーマをランダムに取得
 
-  const selectTopic = (id: number) => {
-    if (selectedTopic === id) {
-      setSelectedTopic(null)
+  const selectTheme = (id: number) => {
+    if (selectedTheme === id) {
+      setSelectedTheme(null)
     } else {
-      setSelectedTopic(id)
+      setSelectedTheme(id)
     }
   }
 
-  const handleNext = () => {
-    if (selectedTopic !== null) {
-      // Store selected topic in localStorage for later use
-      localStorage.setItem("selectedTopics", JSON.stringify([selectedTopic]))
-      router.push("/swipe")
+  const handleNext = async () => {
+    if (selectedTheme !== null) {
+      try {
+        setIsLoading(true)
+        // 選択されたテーマIDから対応するテーマのタイトルを取得
+        const selectedThemeTitle = allThemes.find(theme => theme.id === selectedTheme)?.title || "";
+        
+        // サーバーアクションを呼び出し、テーマをもとにワードを生成
+        const result = await generateValuesText(selectedThemeTitle);
+        
+        if ('text' in result) {
+          // 生成されたワードとテーマIDをlocalStorageに保存
+          localStorage.setItem("selectedThemes", JSON.stringify([selectedTheme]))
+          localStorage.setItem("generatedCards", JSON.stringify(
+            result.text.map((content, index) => ({
+              id: index + 1,
+              content,
+              category: selectedTheme,
+            }))
+          ))
+          
+          router.push("/swipe")
+        } else {
+          // エラー処理
+          console.error("ワード生成エラー:", result.error)
+          alert(`ワードの生成中にエラーが発生しました: ${result.error}`)
+        }
+      } catch (error) {
+        console.error("エラー:", error)
+        alert("処理中にエラーが発生しました。もう一度お試しください。")
+      } finally {
+        setIsLoading(false)
+      }
     }
   }
 
@@ -51,13 +81,13 @@ export default function SelectPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-4xl mx-auto mb-6" data-testid="topics-grid">
-            {displayTopics.map((topic) => (
-              <TopicCard
-                key={topic.id}
-                topic={topic}
-                isSelected={selectedTopic === topic.id}
-                onToggle={selectTopic}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-4xl mx-auto mb-6" data-testid="themes-grid">
+            {displayThemes.map((theme) => (
+              <ThemeCard
+                key={theme.id}
+                theme={theme}
+                isSelected={selectedTheme === theme.id}
+                onToggle={selectTheme}
               />
             ))}
           </div>
@@ -66,12 +96,21 @@ export default function SelectPage() {
             <Button
               size="lg"
               onClick={handleNext}
-              disabled={selectedTopic === null}
+              disabled={selectedTheme === null || isLoading}
               className="rounded-full bg-[#3b7ff2] hover:bg-[#3b7ff2]/90 px-6 py-5 md:px-8 md:py-6 text-base md:text-lg font-bold"
               data-testid="next-button"
             >
-              次へ進む
-              <ArrowRight className="ml-2" />
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  生成中...
+                </>
+              ) : (
+                <>
+                  次へ進む
+                  <ArrowRight className="ml-2" />
+                </>
+              )}
             </Button>
           </div>
         </div>
