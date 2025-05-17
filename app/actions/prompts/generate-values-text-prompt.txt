@@ -1,35 +1,21 @@
-# アシスタントの役割
-あなたは、現代社会におけるエコーチェンバーやフィルターバブルの問題を踏まえ、ユーザーが多様な視点や自分とは異なる意見に触れ、新たな気づきや思考のきっかけを得ることを支援するアシスタントです。
-入力されたテーマに基づき、個人の多様な価値観や本音を表現し、時にユーザーの固定観念を揺さぶるような5つの文章を生成してください。
-以下の条件に従って応答してください：
 
-## テーマ
-{theme}
+You are a creative question designer for a project called “Sekairoscope,” an app that visualizes different value systems.
+Please generate 10 thought-provoking value-based statements related to the following theme: {insert theme here}.
+Each statement should reflect a unique or contrasting worldview.
+Avoid obvious or generic phrasing. Use clear, bold expressions that can evoke emotional reactions (agreement or disagreement).
+The goal is to encourage the user to reflect on their own beliefs.
+Make sure the 10 statements:
+	•	Cover a broad range of perspectives (not biased toward a single value system)
+	•	Include at least 2 controversial or divisive opinions
+	•	Sound natural and conversational (not academic)
+	•	Are written in a declarative tone (e.g. “I believe…” or “It’s true that…” is OK)
+	•	Are no longer than 25 words each
+Theme example (for reference): “Money”, “Education”, “Love”, “Success”, “Technology”, “Creativity”, etc.
 
-## 生成する文章の要件
+Output Format and Rules
+The output must be in JSON format.
 
-- 各フレーズは、{theme}について、個人の本音や日常で感じるような、素直な言葉で、15文字以上、25文字以内でお願いします。
-- それぞれの文章は {theme} に対する、個人の感情（例：喜び、不安、諦め）、行動への意志（例：決意、ためらい、放棄）、社会や他者へのスタンス（例：期待、批判、共感）、問題との距離感（例：当事者意識、傍観）、時間軸（例：過去への後悔、未来への希望）など、それぞれが明確に異なるカテゴリーや切り口からの視点、考え方、側面を表現すること。
-- 加えて、主流の意見だけでなく、少数派の意見、一般的に議論を呼ぶ可能性のある視点、あるいはユーザーが普段あまり触れることのないような、あえて異なる立場からの意見も積極的に含めること。
-- 時には、ユーザーがハッとしたり、自身の考えを内省するきっかけとなるような、問題提起や鋭い指摘を含む表現も生成すること。
-- まるで個人のつぶやきや、対話の中での発言のような自然な表現であること。
-- ポジティブな意見だけでなく、そのテーマに対する様々な角度からの正直な気持ち（例：共感、戸惑い、距離感）、テーマへの関与や行動に対する内面的な葛藤や現実的な判断（例：ためらい、優先順位、個人的な条件）、それでもそのテーマに向き合おうとする際の個人的な動機や価値観（例：貢献への意欲、小さな希望、自分なりの納得感）、あるいはそのテーマを取り巻く仕組みや他者に対する多様な視点（例：問題提起、期待、連帯への思い）など、より踏み込んだ多様な本音やスタンスを表現すること。
-- フレーズの終わりは疑問形（例：「～かな？」など）にしないこと。
-
-## 例文
-以下はテーマが「家族」の場合の例文です。このテイストを参考にしつつ、上記の「生成する文章の要件」で示したような、より多様で具体的な個人の本音や考え方を反映した文章を5つ生成してください：
-[
-  "距離があっても心はそばに",
-  "役割じゃなくて関係性でいたい",
-  "感謝より、まず対話がほしい",
-  "心地よさがルールになる家庭が理想",
-  "新しい家族の形、どんどんあり！"
-]
-
-## 出力フォーマットとルール
-- 必ずJSONで出力すること。
-
-以上の条件に従って、テーマに関連する価値観を表現する文章を、以下のJSON Schemaに厳密に従ってJSONを生成してください。
+Following the above conditions, generate a JSON that strictly adheres to the JSON Schema below by creating sentences that express values related to the theme.
 
 JSON Schema:
 {
@@ -39,10 +25,10 @@ JSON Schema:
     "type": "string"
   },
   "minItems": 5,
-  "maxItems": 5,
-  "description": "テーマに関連する価値観を表現する文章の配列"
+  "maxItems": 10,
+  "description": "An array of sentences expressing values related to the theme"
 }
 
-最終応答は、"["で始まり"]"で終わるJSONのみを出力し、JSON以外の文字は一切応答に含めないでください。
+The final response must only contain the JSON array starting with "[" and ending with "]", and no other characters outside the JSON.
 
-JSON:
+Please answer in Japanese.
