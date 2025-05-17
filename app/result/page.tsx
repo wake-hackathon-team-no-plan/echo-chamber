@@ -100,7 +100,7 @@ export default function ResultPage() {
     return (
       <div className="min-h-screen pt-24 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4">あなたの思考傾向を分析中...</h1>
+          <h1 className="text-3xl font-bold mb-4">思考傾向を分析中...</h1>
           <div className="w-16 h-16 border-4 border-[#ffba08] border-t-transparent rounded-full animate-spin mx-auto"></div>
           <p className="mt-4 text-lg text-gray-600">少々お待ちください</p>
         </div>
@@ -134,8 +134,12 @@ export default function ResultPage() {
             transition={{ duration: 0.5 }}
             className="text-center mb-12"
           >
-            <h1 className="section-title">あなたの思考傾向</h1>
-            <p className={`section-subtitle ${mutedTextColor}`}>あなたの選択から見えてきた思考の特徴を可視化しました</p>
+            <h1 className="section-title">{activeTab === "user" ? "あなたの思考傾向" : "異なる視点の思考傾向"}</h1>
+            <p className={`section-subtitle ${mutedTextColor}`}>
+              {activeTab === "user"
+                ? "あなたの選択から見えてきた思考の特徴を可視化しました"
+                : "あなたとは異なる価値観や考え方の特徴を可視化しました"}
+            </p>
           </motion.div>
 
           <Tabs defaultValue={activeTab} value={activeTab} onValueChange={setActiveTab} className="max-w-6xl mx-auto">
@@ -213,7 +217,7 @@ export default function ResultPage() {
               className={`rounded-full border-2 px-6 py-2 ${
                 activeTab === "user"
                   ? "border-black text-black hover:bg-black/10"
-                  : "border-white text-white hover:bg-white/10"
+                  : "border-white text-white bg-black hover:bg-white/10"
               }`}
             >
               もう一度はじめから
