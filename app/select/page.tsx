@@ -35,7 +35,7 @@ export default function SelectPage() {
         
         if ('text' in result) {
           // 生成されたワードとテーマIDをlocalStorageに保存
-          localStorage.setItem("selectedThemes", JSON.stringify([selectedTheme]))
+          localStorage.setItem("selectedThemes", JSON.stringify([selectedThemeTitle]))
           localStorage.setItem("generatedCards", JSON.stringify(
             result.text.map((content, index) => ({
               id: index + 1,

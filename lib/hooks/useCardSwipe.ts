@@ -3,9 +3,8 @@ import type { Card } from "@/types/swipe"
 
 // レスポンスの型定義
 export type SwipeAnswer = {
-  id: number
-  content: string
-  response: "like" | "dislike"
+  viewpoint: string
+  resonates: boolean
 }
 
 type UseCardSwipeProps = {
@@ -22,9 +21,8 @@ export function useCardSwipe({ cards, onComplete }: UseCardSwipeProps) {
 
     // 回答を記録
     const newAnswer: SwipeAnswer = {
-      id: cards[currentIndex].id,
-      content: cards[currentIndex].content,
-      response: direction === "right" ? "like" : "dislike"
+      viewpoint: cards[currentIndex].content,
+      resonates: direction === "right"
     }
 
     // 最後のカードの場合
