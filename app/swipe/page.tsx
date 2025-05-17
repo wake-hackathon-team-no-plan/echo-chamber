@@ -1,41 +1,72 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import { motion } from "framer-motion"
-import { X, Check } from "lucide-react"
-import { useCardSwipe, type SwipeAnswer } from "@/lib/hooks/useCardSwipe"
-import { useCards } from "@/lib/hooks/useCards"
-import { CardStack } from "@/components/feature/swipe/CardStack"
-import { TutorialPopup } from "@/components/feature/swipe/TutorialPopup"
-import { LoadingOverlay } from "@/components/ui/loadingOverlay"
+import type React from "react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { motion } from "framer-motion";
+import { X, Check } from "lucide-react";
+import { useCardSwipe, type SwipeAnswer } from "@/lib/hooks/useCardSwipe";
+import { useCards } from "@/lib/hooks/useCards";
+import { CardStack } from "@/components/feature/swipe/CardStack";
+import { TutorialPopup } from "@/components/feature/swipe/TutorialPopup";
+import { LoadingOverlay } from "@/components/ui/loadingOverlay";
+import { generateResultsText } from "@/app/actions/generate-results-text";
 
 // TODO: Server Actionの型定義（仮）
 type GeneratePromptResponse = {
-  prompt: string
-  error?: string
-}
+  prompt?: string;
+  error?: string;
+};
 
 type GenerateMovieResponse = {
-  videoUrl: string
-  error?: string
-}
+  videoUrl: string;
+  error?: string;
+};
 
+type GenerateKeywordsResponse = {
+  keywords: string[];
+  perspective: string;
+  error?: string;
+};
 
-const generatePrompt = async (answers: SwipeAnswer[]): Promise<GeneratePromptResponse> => {
+const generatePrompt = async (
+  answers: SwipeAnswer[]
+): Promise<GeneratePromptResponse> => {
+  const selectedTheme = localStorage.getItem("selectedThemes");
+
+  if (!selectedTheme) {
+    return { error: "テーマが選択されていません" };
+  }
+
+  // TODO ここでプロンプト生成用のサーバーアクションを呼ぶ
+  // try {
+  //   const result = await generateResultsText(selectedTheme, answers);
+  //   if ("error" in result) {
+  //     return { error: result.error };
+  //   }
+  //   return { prompt: result.prompt };
+  // } catch (error) {
+  //   return {
+  //     error:
+  //       error instanceof Error ? error.message : "プロンプト生成に失敗しました",
+  //   };
+  // }
+
   // スタブ実装
   console.log("answers", answers)
   await new Promise(resolve => setTimeout(resolve, 1000))
   return {
     prompt: "サンプルプロンプト：あなたの興味は環境問題と技術革新に集中しています..."
   }
-}
 
-const generateMovie = async (prompt: string): Promise<GenerateMovieResponse> => {
-  // TODO
+};
+
+const generateMovie = async (
+  prompt: string
+): Promise<GenerateMovieResponse> => {
+  // TODO ここで動画生成用のサーバーアクションを呼ぶ
   /*
   try {
     const result = await veoClient.generateVideo(prompt)
@@ -50,66 +81,124 @@ const generateMovie = async (prompt: string): Promise<GenerateMovieResponse> => 
   */
 
   // スタブ実装
-  await new Promise(resolve => setTimeout(resolve, 2000))
+  await new Promise((resolve) => setTimeout(resolve, 2000));
   return {
-    videoUrl: "/videos/sample.mp4"
+    videoUrl: "/videos/sample.mp4",
+  };
+};
+
+const generateKeywords = async (answers: SwipeAnswer[]): Promise<GenerateKeywordsResponse> => {
+  const selectedTheme = localStorage.getItem("selectedThemes");
+
+  if (!selectedTheme) {
+    return { keywords: [], perspective: "", error: "テーマが選択されていません" };
   }
+
+  // try {
+  //   // TODO ここでキーワードと価値観生成用のサーバーアクションを呼ぶ
+  //   const result = await generateResultsText(selectedTheme, answers);
+  //   if ("error" in result) {
+  //     return { keywords: [], perspective: "", error: result.error };
+  //   }
+  //   return { keywords: result.keywords, perspective: result.perspective };
+  // } catch (error) {
+  //   return {
+  //     keywords: [],
+  //     perspective: "",
+  //     error: error instanceof Error ? error.message : "プロンプト生成に失敗しました",
+  //   };
+  // }
+
+  // スタブ実装
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  return { keywords: ["keyword1", "keyword2"], perspective: "somePerspective" };
 }
 
 export default function SwipePage() {
-  const router = useRouter()
-  const [showTutorial, setShowTutorial] = useState(true)
-  const [isGenerating, setIsGenerating] = useState(false)
+  const router = useRouter();
+  const [showTutorial, setShowTutorial] = useState(true);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // カードの取得
-  const { cards } = useCards()
+  const { cards } = useCards();
 
-  // 完了時の処理
+  const createOppositeAnswers = (answers: SwipeAnswer[]): SwipeAnswer[] => {
+    return answers.map((answer) => ({
+      ...answer,
+      resonates: !answer.resonates,
+    }));
+  };
+
   const handleComplete = async (answers: SwipeAnswer[]) => {
     try {
-      setIsGenerating(true)
+      setIsGenerating(true);
+      const oppositeAnswers = createOppositeAnswers(answers);
 
-      // 1. プロンプト生成
-      const promptResult = await generatePrompt(answers)
-      if (promptResult.error) throw new Error(promptResult.error)
+      const generateVideoProcess = async (
+        answers: SwipeAnswer[]
+      ) => {
 
-      // 2. 動画生成
-      const movieResult = await generateMovie(promptResult.prompt)
-      if (movieResult.error) throw new Error(movieResult.error)
+        // プロンプト生成
+        const promptResult = await generatePrompt(answers);
+        if (promptResult.error || !promptResult.prompt)
+          throw new Error(
+            promptResult.error || "プロンプトの生成に失敗しました"
+          );
 
-      // 3. 動画URLをローカルストレージに保存
-      localStorage.setItem("generatedVideo", movieResult.videoUrl)
+        // 動画生成
+        const movieResult = await generateMovie(promptResult.prompt);
+        if (movieResult.error) throw new Error(movieResult.error);
 
-      // 4. 次の画面に遷移
-      router.push("/perspective")
+        return movieResult.videoUrl;
+      };
+
+      const [userVideoURL, oppositeVideURL, userKeywordsResult, oppositeKeywordsResult] = await Promise.all([
+        generateVideoProcess(answers),
+        generateVideoProcess(oppositeAnswers),
+        generateKeywords(answers),
+        generateKeywords(oppositeAnswers)
+      ]);
+
+      // 自分の価値観
+      // localStorage.setItem("userVideoPath", userVideoURL);
+      // TODO テストようなので後で消す
+      localStorage.setItem("userVideoPath", "/videos/sample.mp4")
+      localStorage.setItem("userKeywords:", JSON.stringify(userKeywordsResult.keywords));
+      localStorage.setItem("userPerspective:", userKeywordsResult.perspective);
+
+      // 他人の価値観
+      // localStorage.setItem("oppositeVideoPath", oppositeVideURL);
+      // TODO テストようなので後で消す
+      localStorage.setItem("oppositeVideoPath", "/videos/sampleOpposite.mp4")
+      localStorage.setItem("oppositeKeywords:", JSON.stringify(oppositeKeywordsResult.keywords));
+      localStorage.setItem("oppositePerspective:", oppositeKeywordsResult.perspective);
+
+      router.push("/perspective");
+      
     } catch (error) {
-      console.error("生成処理中にエラーが発生しました:", error)
+      console.error("生成処理中にエラーが発生しました:", error);
     } finally {
-      setIsGenerating(false)
+      setIsGenerating(false);
     }
-  }
-  
+  };
+
   // スワイプの状態管理
-  const { currentIndex, handleSwipe, swipeAnswers } = useCardSwipe({
+  const { currentIndex, handleSwipe } = useCardSwipe({
     cards,
-    onComplete: handleComplete
-  })
+    onComplete: handleComplete,
+  });
 
   // 進行状況の計算
-  const progress = cards.length > 0 ? (currentIndex / cards.length) * 100 : 0
-  const isCompleted = currentIndex >= cards.length
+  const progress = cards.length > 0 ? (currentIndex / cards.length) * 100 : 0;
+  const isCompleted = currentIndex >= cards.length;
 
   return (
     <div className="h-full bg-gray-100 overflow-y-auto">
       {/* ローディングオーバーレイ */}
-      {isGenerating && (
-        <LoadingOverlay message="AIが視点を生成中..." />
-      )}
+      {isGenerating && <LoadingOverlay message="AIが視点を生成中..." />}
 
       {/* 操作説明（初回のみ） */}
-      {showTutorial && (
-        <TutorialPopup onClose={() => setShowTutorial(false)} />
-      )}
+      {showTutorial && <TutorialPopup onClose={() => setShowTutorial(false)} />}
 
       <section className="h-full py-4">
         <div className="container mx-auto px-4 max-w-screen-lg">
@@ -120,7 +209,9 @@ export default function SwipePage() {
             className="text-center mb-12"
           >
             <h1 className="section-title">あなたの考えを教えてください</h1>
-            <p className="section-subtitle">各質問に対して、直感的に「共感・興味あり」か「興味なし」でお答えください</p>
+            <p className="section-subtitle">
+              各質問に対して、直感的に「共感・興味あり」か「興味なし」でお答えください
+            </p>
           </motion.div>
 
           {/* 進捗バーと残りカード数表示 */}
@@ -133,9 +224,9 @@ export default function SwipePage() {
 
           {/* カード表示エリア */}
           <div className="w-full max-w-sm sm:max-w-md md:max-w-2xl mx-auto mb-6 sm:mb-8 md:mb-12 px-2 sm:px-4">
-            <CardStack 
-              cards={cards} 
-              currentIndex={currentIndex} 
+            <CardStack
+              cards={cards}
+              currentIndex={currentIndex}
               onSwipe={handleSwipe}
             />
           </div>
@@ -164,9 +255,9 @@ export default function SwipePage() {
 
           {/* スキップボタン */}
           <div className="text-center">
-            <Button 
-              variant="ghost" 
-              className="text-gray-500 hover:text-gray-700" 
+            <Button
+              variant="ghost"
+              className="text-gray-500 hover:text-gray-700"
               onClick={() => router.push("/perspective")}
               disabled={isGenerating}
             >
@@ -176,5 +267,5 @@ export default function SwipePage() {
         </div>
       </section>
     </div>
-  )
+  );
 }
