@@ -1,9 +1,9 @@
 /**
- * トピック選択用のカードコンポーネント
+ * テーマ選択用のカードコンポーネント
  */
 import { Card, CardContent } from "@/components/ui/card"
 import { motion } from "framer-motion"
-import { Topic } from "./topics"
+import { Theme } from "./themes"
 
 // Lucideアイコンを使用してMaterial Design風のアイコンを提供
 import {
@@ -54,15 +54,15 @@ const iconMap: Record<string, React.FC<{ size?: number; className?: string }>> =
   "ConnectWithoutContact": ShareIcon
 }
 
-type TopicCardProps = {
-  topic: Topic
+type ThemeCardProps = {
+  theme: Theme
   isSelected: boolean
   onToggle: (id: number) => void
 }
 
-export function TopicCard({ topic, isSelected, onToggle }: TopicCardProps) {
+export function ThemeCard({ theme, isSelected, onToggle }: ThemeCardProps) {
   // マッピングからアイコンを取得、なければフォールバック
-  const IconComponent = iconMap[topic.iconName] || HelpCircleIcon
+  const IconComponent = iconMap[theme.iconName] || HelpCircleIcon
 
   return (
     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -72,14 +72,14 @@ export function TopicCard({ topic, isSelected, onToggle }: TopicCardProps) {
             ? "border-4 border-[#3b7ff2] bg-[#3b7ff2]/10"
             : "border border-gray-200 hover:border-[#3b7ff2]/50"
         }`}
-        onClick={() => onToggle(topic.id)}
-        data-testid={`topic-card-${topic.id}`}
+        onClick={() => onToggle(theme.id)}
+        data-testid={`theme-card-${theme.id}`}
       >
         <CardContent className="flex flex-col items-center justify-center p-6 h-full">
           <div className="mb-4 text-gray-700">
             <IconComponent size={40} className="stroke-[1.5px]" />
           </div>
-          <h3 className="text-xl font-bold" data-testid={`topic-title-${topic.id}`}>{topic.title}</h3>
+          <h3 className="text-xl font-bold" data-testid={`theme-title-${theme.id}`}>{theme.title}</h3>
         </CardContent>
       </Card>
     </motion.div>
