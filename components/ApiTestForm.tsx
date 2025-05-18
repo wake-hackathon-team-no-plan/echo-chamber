@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { generateValuesText } from '../app/actions/generate-values-text';
 import { generateMovie } from '../app/actions/generate-movie';
 import { getPromptTemplate } from '../app/actions/get-prompt-template';
-import { generateResultsText as generateMoviePromptText, Viewpoint } from '../app/actions/generate-movie-prompt-text';
+import { generateMoviePrompt, Viewpoint } from '../app/actions/generate-movie-prompt-text';
 import { generateResultsText } from '../app/actions/generate-results-text';
 
 export default function ApiTestForm() {
@@ -106,15 +106,14 @@ export default function ApiTestForm() {
     setTheme(selectedTheme);
   };
 
-  // 映画プロンプト生成のハンドラ
+  // 動画プロンプト生成のハンドラ
   const handleMoviePromptGeneration = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    setMoviePromptResult('');
-
+    setMoviePromptResult('');    
     try {
-      const response = await generateMoviePromptText(
+      const response = await generateMoviePrompt(
         moviePromptTheme,
         moviePromptViewpoints,
         parseFloat(temperature)

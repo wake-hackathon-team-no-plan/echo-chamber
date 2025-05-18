@@ -20,7 +20,7 @@ export type Viewpoint = {
  * @param temperature [任意] テキスト生成の温度（0.0～2.0）、デフォルト: 1.0
 * @returns 動画生成用プロンプト
  */
-export async function generateResultsText(
+export async function generateMoviePrompt(
   theme: string,
   viewpoints: Viewpoint[],
   temperature: number = 1.0
