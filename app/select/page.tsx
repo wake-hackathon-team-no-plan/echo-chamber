@@ -8,6 +8,7 @@ import { ArrowRight, Loader2 } from "lucide-react"
 import { ThemeCard } from "@/components/feature/select/theme-card"
 import { useRandomThemes, allThemes } from "@/components/feature/select/themes"
 import { generateValuesText } from "@/app/actions/generate-values-text"
+import { LoadingOverlay } from "@/components/ui/loadingOverlay"
 
 export default function SelectPage() {
   const router = useRouter()
@@ -61,6 +62,8 @@ export default function SelectPage() {
 
   return (
     <div className="h-full bg-gray-100 overflow-y-auto">
+      {/* ローディングオーバーレイ */}
+      {isLoading && <LoadingOverlay message="テーマを生成中..." />}
       <section className="h-full py-4">
         <div className="container mx-auto px-4">
           <motion.div
