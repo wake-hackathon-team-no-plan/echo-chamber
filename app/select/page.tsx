@@ -31,20 +31,8 @@ export default function SelectPage() {
         // 選択されたテーマIDから対応するテーマのタイトルを取得
         const selectedThemeTitle = allThemes.find(theme => theme.id === selectedTheme)?.title || "";
         
-        // 開始時間を記録
-        const startTime = Date.now();
-
         // サーバーアクションを呼び出し、テーマをもとにワードを生成
         const result = await generateValuesText(selectedThemeTitle);
-
-        // 終了時間を記録
-        const endTime = Date.now();
-
-        // 実行時間を計算
-        const executionTime = endTime - startTime;
-
-        // 実行時間をログに出力
-        console.log(`サーバーアクションの実行時間: ${executionTime}ミリ秒`);
         
         if ('text' in result) {
           // 生成されたワードとテーマIDをlocalStorageに保存
