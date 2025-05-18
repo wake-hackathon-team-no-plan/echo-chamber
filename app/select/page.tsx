@@ -8,6 +8,7 @@ import { ArrowRight, Loader2 } from "lucide-react"
 import { ThemeCard } from "@/components/feature/select/theme-card"
 import { useRandomThemes, allThemes } from "@/components/feature/select/themes"
 import { generateValuesText } from "@/app/actions/generate-values-text"
+import { LoadingOverlay } from "@/components/ui/loadingOverlay"
 
 export default function SelectPage() {
   const router = useRouter()
@@ -30,8 +31,20 @@ export default function SelectPage() {
         // 選択されたテーマIDから対応するテーマのタイトルを取得
         const selectedThemeTitle = allThemes.find(theme => theme.id === selectedTheme)?.title || "";
         
+        // 開始時間を記録
+        const startTime = Date.now();
+
         // サーバーアクションを呼び出し、テーマをもとにワードを生成
         const result = await generateValuesText(selectedThemeTitle);
+
+        // 終了時間を記録
+        const endTime = Date.now();
+
+        // 実行時間を計算
+        const executionTime = endTime - startTime;
+
+        // 実行時間をログに出力
+        console.log(`サーバーアクションの実行時間: ${executionTime}ミリ秒`);
         
         if ('text' in result) {
           // 生成されたワードとテーマIDをlocalStorageに保存
@@ -61,6 +74,8 @@ export default function SelectPage() {
 
   return (
     <div className="h-full bg-gray-100 overflow-y-auto">
+      {/* ローディングオーバーレイ */}
+      {isLoading && <LoadingOverlay message="テーマを生成中..." />}
       <section className="h-full py-4">
         <div className="container mx-auto px-4">
           <motion.div
