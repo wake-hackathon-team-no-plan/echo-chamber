@@ -3,19 +3,9 @@
 import { useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
 
-interface Keyword {
-  text: string
-  value: number
-  articles: Array<{
-    title: string
-    url: string
-    image: string
-  }>
-}
-
 interface WordCloudProps {
-  keywords: Keyword[]
-  onKeywordClick: (keyword: Keyword) => void
+  keywords: string[]
+  onKeywordClick: (keyword: string) => void
   theme?: "light" | "dark"
 }
 
@@ -49,33 +39,113 @@ export default function WordCloud({ keywords, onKeywordClick, theme = "light" }:
   useEffect(() => {
     if (!containerRef.current) return
 
+    // ✅　　バージョン01 ランダム
+    // const container = containerRef.current
+    // const width = container.clientWidth
+    // const height = container.clientHeight
+    // const centerX = width / 2
+    // const centerY = height / 2
+
+    // const newPositions = keywords.map((keyword, index) => {
+    //   // インデックスベースでフォントサイズを決定（例: 16〜40pxの範囲で段階的に）
+    //   const max = 40
+    //   const min = 16
+    //   const step = (max - min) / Math.max(1, keywords.length - 1)
+    //   const size = Math.round(max - index * step)
+
+    //   // スパイラル状に配置するための角度と半径
+    //   const angle = index * 0.5 * Math.PI
+    //   const radius = 20 + index * 15 + size / 2
+
+    //   // 中心からの距離に基づいて座標を計算
+    //   const x = centerX + Math.cos(angle) * radius
+    //   const y = centerY + Math.sin(angle) * radius
+
+    //   // ランダムな色を選択
+    //   const color = colors[index % colors.length]
+
+    //   // ランダムな回転角度
+    //   const textAngle = Math.random() * 30 - 15
+
+    //   return { x, y, size, color, angle: textAngle }
+    // })
+    // ✅　　バージョン01 ランダム　ここまで
+
+    // ✅　✅　　バージョン02 多角形
     const container = containerRef.current
     const width = container.clientWidth
     const height = container.clientHeight
     const centerX = width / 2
     const centerY = height / 2
+    const radius = 120 // 適宜調整
 
-    // キーワードの位置を計算
+    const N = keywords.length // 例: 10個なら正十角形
     const newPositions = keywords.map((keyword, index) => {
-      // 値に基づいてフォントサイズを決定（最小16px、最大40px）
-      const size = 16 + (keyword.value / 100) * 24
+      // 角度を等分割
+      const angle = (2 * Math.PI * index) / N - Math.PI / 2 // 上からスタート
+      let r = radius
+      // 一番上と一番下の頂点だけ外側に
+      if (index === 0 || index === Math.floor(N / 2)) {
+        r = radius + 30 // 30px外側に
+      }
 
-      // スパイラル状に配置するための角度と半径
-      const angle = index * 0.5 * Math.PI
-      const radius = 20 + index * 15 + keyword.value / 10
-
-      // 中心からの距離に基づいて座標を計算
-      const x = centerX + Math.cos(angle) * radius
-      const y = centerY + Math.sin(angle) * radius
-
-      // ランダムな色を選択
+      const x = centerX + Math.cos(angle) * r
+      const y = centerY + Math.sin(angle) * r
+      const isMobile = window.innerWidth <= 640
+      const size = isMobile ? 18 : 24
       const color = colors[index % colors.length]
-
-      // ランダムな回転角度
-      const textAngle = Math.random() * 30 - 15
-
-      return { x, y, size, color, angle: textAngle }
+      return { x, y, size, color, angle: 0 }
     })
+    // ✅　　バージョン02 多角形　ここまで
+
+    // ✅　　バージョン03 バラバラ
+    // const container = containerRef.current
+    // const width = container.clientWidth
+    // const height = container.clientHeight
+    // const centerX = width / 2
+    // const centerY = height / 2
+    // const radius = 120 // 適宜調整
+    // const N = keywords.length
+
+    // const newPositions = keywords.map((keyword, index) => {
+    //   const angle = (2 * Math.PI * index) / N - Math.PI / 2
+    //   // 半径にばらつき
+    //   let r = radius + Math.random() * 30 - 15
+    //   if (index === 0 || index === Math.floor(N / 2)) {
+    //     r += 30
+    //   }
+    //   const x = centerX + Math.cos(angle) * r
+    //   const y = centerY + Math.sin(angle) * r
+    //   // フォントサイズにもばらつき
+    //   const size = Math.floor(Math.random() * (36 - 18 + 1)) + 18
+    //   const color = colors[index % colors.length]
+    //   return { x, y, size, color, angle: 0 }
+    // })
+    // ✅　　バージョン03 バラバラ　ここまで
+
+    // ✅　✅　　バージョン04 放射状
+    // const container = containerRef.current
+    // const width = container.clientWidth
+    // const height = container.clientHeight
+    // const centerX = width / 2
+    // const centerY = height / 2
+    // const radius = 120 // 適宜調整
+    // const N = keywords.length
+
+    // const newPositions = keywords.map((keyword, index) => {
+    // const angle = (2 * Math.PI * index) / N - Math.PI / 2
+    // // 放射状にするため、半径をインデックスで大きく
+    // const r = radius + (index % 2 === 0 ? 40 : -20)
+    // const x = centerX + Math.cos(angle) * r
+    // const y = centerY + Math.sin(angle) * r
+    // const isMobile = window.innerWidth <= 640
+    // const size = isMobile ? 18 : 24
+    // const color = colors[index % colors.length]
+    // return { x, y, size, color, angle: 0 }
+    // })
+    // ✅　　バージョン04 放射状　ここまで
+
+  // })
 
     setPositions(newPositions)
 
@@ -192,7 +262,7 @@ export default function WordCloud({ keywords, onKeywordClick, theme = "light" }:
             boxShadow: theme === "light" ? "0 5px 15px rgba(0,0,0,0.1)" : "0 5px 15px rgba(0,0,0,0.3)",
           }}
         >
-          {keywords[index].text}
+          {keywords[index]}
         </motion.div>
       ))}
     </div>
