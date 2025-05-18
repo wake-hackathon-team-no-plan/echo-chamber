@@ -13,9 +13,8 @@ Make sure the 10 statements:
 
 # Output Format and Rules
 - Please answer in Japanese.
-- The output must be in JSON format.
-
-Following the above conditions, generate a JSON that strictly adheres to the JSON Schema below by creating sentences that express values related to the theme.
+- The output must be in JSON format, strictly adhering to the JSON Schema below, to ensure it can be automatically processed by subsequent systems.
+- Generate sentences expressing values related to the theme and store them as elements in a JSON array.
 
 JSON Schema:
 {

@@ -3,11 +3,14 @@
 import { geminiClient } from '../../lib/vertex-ai/gemini';
 import * as fs from 'fs';
 import * as path from 'path';
+import { AppConfig } from '../../lib/app-config';
 
 /**
  * 選択したテーマに基づいて価値観テキストを生成するServer Action
  * @param theme [必須] 選択されたテーマ
- * @returns 価値観テキストの配列、またはエラー情報
+ * @param customPrompt [任意] カスタムプロンプト
+ * @param temperature [任意] テキスト生成の温度（0.0～2.0）、デフォルト: 1.0
+ * @returns 価値観テキストのリスト
  */
 export async function generateValuesText(
   theme: string,
@@ -17,30 +20,37 @@ export async function generateValuesText(
   try {
     // 入力の検証
     if (!theme || theme.trim().length === 0) {
-      return { error: 'テーマを選択してください' };
+      return { error: '【価値観生成】テーマを指定してください' };
     }
 
     console.log(`【価値観生成】INPUT: テーマ="${theme}" `);
     
-    // プロンプトの読み込み
-    // プロンプトの処理
+    // プロンプトの読み込みと変数置換
     let prompt;
     if (customPrompt) {
       prompt = customPrompt.replace(/\{theme\}/g, theme);
     } else {
-      const promptPath = path.join(process.cwd(), 'app', 'actions', 'prompts', 'generate-values-text-prompt.txt');
-      let promptTemplate = fs.readFileSync(promptPath, 'utf8');
+      const promptPath = path.join(process.cwd(), 'app', 'actions', 'prompts', 'generate-values-prompt.txt');
+      const promptTemplate = fs.readFileSync(promptPath, 'utf8');
       prompt = promptTemplate.replace(/\{theme\}/g, theme);
     }
-    
-    console.log(`【価値観生成】プロンプト: ${prompt}`);
+      console.log(`【価値観生成】プロンプト: ${prompt}`);
 
-    // スタブモードに切り替え
-    geminiClient.setUseStub(true);
-
-    // Gemini APIを呼び出してテキスト生成
-    const responseText = await geminiClient.generateText(prompt, temperature);
-    console.log(`【価値観生成】生成テキスト: ${responseText}`);
+    let responseText;    
+    if (AppConfig.AI_STUB_MODE.VALUES_TEXT) {
+      console.log('【価値観生成】スタブモード: 固定レスポンスを使用');
+      responseText = JSON.stringify([
+        "家族のために時間を作ることを大切にする",
+        "家族一人一人の個性を尊重し、互いを理解し合う",
+        "家族との対話を通じて、絆を深める",
+        "家族で共に成長し、支え合える関係を築く",
+        "家族の幸せを第一に考え、行動する"
+      ]);
+    } else {
+      // Gemini APIを呼び出してテキスト生成
+      responseText = await geminiClient.generateText(prompt, temperature);
+    }
+    console.log(`【価値観生成】OUTPUT: 生成テキスト: ${responseText}`);
 
     let values: string[];
 
@@ -65,10 +75,8 @@ export async function generateValuesText(
       console.error(`【価値観生成】文字列以外の値が含まれています: ${JSON.stringify(values)}`);
       return { error: '生成テキストの形式が不正です' };
     }
-
-    console.log(`【価値観生成】OUTPUT: ${values.length}件の価値観を生成`);
+    console.log(`【価値観生成】${values.length}件の価値観を生成`);
     
-    // すべての検証をパスした場合のみ成功レスポンスを返す
     return { text: values };
 
 
