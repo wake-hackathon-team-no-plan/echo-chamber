@@ -12,6 +12,14 @@ type Props = {
 export default function KeywordModal({ selectedKeyword, activeTab, handleCloseArticle }: Props) {
   if (!selectedKeyword) return null
 
+  let theme = ""
+  if (typeof window !== "undefined") {
+    const selectedThemes = localStorage.getItem("selectedThemes")
+    if (selectedThemes) {
+      theme = JSON.parse(selectedThemes)
+    }
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -29,7 +37,7 @@ export default function KeywordModal({ selectedKeyword, activeTab, handleCloseAr
           </h3>
           <div className="space-y-4">
             <a
-              href={`https://www.google.com/search?q=${encodeURIComponent(selectedKeyword)}`}
+              href={`https://www.google.com/search?q=${encodeURIComponent(`${theme}　${selectedKeyword}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className={`flex items-center gap-4 p-3 rounded-lg transition-colors ${
