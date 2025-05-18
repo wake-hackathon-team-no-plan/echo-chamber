@@ -43,7 +43,7 @@ export default function ResultPage() {
   }
   const handleShare = () => {
     // Twitterシェア機能
-    const text = "私の思考バイアスを可視化してみました！"
+    const text = "あなたの情報の偏り、可視化してみませんか？"
     const url = window.location.href
     window.open(
       `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
