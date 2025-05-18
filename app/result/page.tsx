@@ -9,77 +9,41 @@ import { motion } from "framer-motion"
 import { Share2 } from "lucide-react"
 import WordCloud from "@/components/feature/word-cloud"
 import VideoPlayer from "@/components/feature/video-player"
-import { sampleAnalysisData } from "@/components/feature/result/sampleAnalysisData"
+import KeywordModal from "@/components/feature/result/keywordModal"
+import { useResults } from "@/lib/hooks/useResults"
 
 
 export default function ResultPage() {
   const router = useRouter()
-  const [analysisData, setAnalysisData] = useState<any>(null)
   const [selectedKeyword, setSelectedKeyword] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState("user")
-  const [userVideoUrl, setUserVideoUrl] = useState("")
-  const [oppositeVideoUrl, setOppositeVideoUrl] = useState("")
+  const [activeTab, setActiveTab] = useState("opposite")
+  // 結果の取得
+  const { data } = useResults()
+  console.log("ローカルからのデータ",data)
 
-  useEffect(() => {
-    // localStorage から選択された視点を取得
-    const storedPerspective = localStorage.getItem("selectedPerspective")
-    if (storedPerspective) {
-      setActiveTab(storedPerspective)
-    }
+  // 各データ
+  const userVideoUrl = data?.user?.videoUrl || ""
+  const oppositeVideoUrl = data?.opposite?.videoUrl || ""
+  const userPerspective = data?.user?.perspective || ""
+  const oppositePerspective = data?.opposite?.perspective || ""
+  const userKeywords = data?.user?.keywords || []
+  const oppositeKeywords = data?.opposite?.keywords || []
 
-    // localStorage から動画URLを取得
-    // ✅ TODO: key は仮で設定
-    const userVideoFromStorage = localStorage.getItem("userVideoPath");
-    const oppositeVideoFromStorage = localStorage.getItem("oppositeVideoPath");
-
-    // 取得したパスがあれば状態にセット
-    if (userVideoFromStorage && oppositeVideoFromStorage) {
-    setUserVideoUrl(userVideoFromStorage);
-    setOppositeVideoUrl(oppositeVideoFromStorage);
-
-    // 分析データ取得（サンプルデータを使用）
-    const fetchAnalysisOnly = async () => {
-      try {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        setAnalysisData(sampleAnalysisData);
-      } catch (error) {
-        console.error("Failed to fetch analysis data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchAnalysisOnly();
-  } else {
-    // 開発用: ローカルストレージに動画URLがない場合の処理
-    // 本番環境では、ここでエラーを表示するか前のページにリダイレクト
-    console.error("Video URLs not found in localStorage");
-    setIsLoading(false);
-
-    // サンプルデータを使用して表示（開発用）
-    setAnalysisData(sampleAnalysisData);
-
-    // 開発用メッセージ
-    console.warn("開発用: 動画URLがローカルストレージにありません。本番環境ではエラーになります。");
-  }
-
-  }, [])
-
-  console.log("userVideoUrl", userVideoUrl) // ✅ rm later　‼️
-  console.log("oppositeVideoUrl", oppositeVideoUrl) // ✅ rm later　‼️
+  // タブに応じたスタイルを設定
+  const bgColor = activeTab === "user" ? "bg-gray-100" : "bg-gray-900"
+  const textColor = activeTab === "user" ? "text-black" : "text-white"
+  const secondaryBgColor = activeTab === "user" ? "bg-white" : "bg-gray-800"
+  const secondaryTextColor = activeTab === "user" ? "text-gray-800" : "text-gray-200"
 
   const handleKeywordClick = (keyword: any) => {
     setSelectedKeyword(keyword)
   }
-
   const handleCloseArticle = () => {
     setSelectedKeyword(null)
   }
-
   const handleShare = () => {
     // Twitterシェア機能
-    const text = "私の思考バイアスを可視化してみました！"
+    const text = "あなたの情報の偏り、可視化してみませんか？"
     const url = window.location.href
     window.open(
       `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
@@ -91,12 +55,12 @@ export default function ResultPage() {
     // ローカルストレージをクリアして最初から始める
     localStorage.removeItem("selectedThemes")
     localStorage.removeItem("responses")
-    localStorage.removeItem("selectedPerspective")
     localStorage.removeItem("generatedCards")
+    localStorage.removeItem("results")
     router.push("/")
   }
 
-  if (isLoading) {
+  if (!data) {
     return (
       <div className="min-h-screen pt-24 flex items-center justify-center">
         <div className="text-center">
@@ -108,45 +72,24 @@ export default function ResultPage() {
     )
   }
 
-  if (!analysisData) {
-    return (
-      <div className="min-h-screen pt-24 flex items-center justify-center">
-        <p className="text-xl">データの読み込みに失敗しました。もう一度お試しください。</p>
-      </div>
-    )
-  }
-
-  // タブに応じたスタイルを設定
-  const bgColor = activeTab === "user" ? "bg-gray-100" : "bg-gray-900"
-  const textColor = activeTab === "user" ? "text-black" : "text-white"
-  const accentColor = activeTab === "user" ? "#ffba08" : "#00c896"
-  const secondaryBgColor = activeTab === "user" ? "bg-white" : "bg-gray-800"
-  const secondaryTextColor = activeTab === "user" ? "text-gray-800" : "text-gray-200"
-  const mutedTextColor = activeTab === "user" ? "text-gray-600" : "text-gray-400"
-
   return (
     <div className={`min-h-screen transition-colors duration-500 ${bgColor} ${textColor}`}>
-      <section className="py-16">
+      <section className="pt-6">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-center mb-12"
+            className="text-center mb-8"
           >
-            <h1 className="section-title">{activeTab === "user" ? "あなたの思考傾向" : "異なる視点の思考傾向"}</h1>
-            <p className={`section-subtitle ${mutedTextColor}`}>
-              {activeTab === "user"
-                ? "あなたの選択から見えてきた思考の特徴を可視化しました"
-                : "あなたとは異なる価値観や考え方の特徴を可視化しました"}
-            </p>
+            <h1 className="text-3xl md:text-4xl font-bold">{activeTab === "user" ? "あなたの思考傾向" : "異なる視点の思考傾向"}</h1>
           </motion.div>
 
           <Tabs defaultValue={activeTab} value={activeTab} onValueChange={setActiveTab} className="max-w-6xl mx-auto">
-            <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsList className="grid w-full grid-cols-2 mb-8 bg-transparent">
               <TabsTrigger
                 value="user"
-                className="text-lg py-3 data-[state=active]:bg-[#ffba08] data-[state=active]:text-white"
+                className="text-lg py-3 text-white data-[state=active]:bg-[#ffba08] data-[state=active]:text-white"
               >
                 あなたの視点
               </TabsTrigger>
@@ -162,15 +105,16 @@ export default function ResultPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <Card className={`overflow-hidden ${secondaryBgColor} border-0`}>
                   <CardContent className="p-0">
-                    <VideoPlayer videoUrl={userVideoUrl || analysisData?.user?.videoUrl} theme="light" />
+                    <VideoPlayer videoUrl={userVideoUrl} theme="light" />
                   </CardContent>
+                  <p className="px-4 py-6 leading-7">{userPerspective}</p>
                 </Card>
 
                 <Card className={`${secondaryBgColor} border-0`}>
                   <CardContent className="p-6">
                     <h3 className={`text-2xl font-bold mb-4 ${secondaryTextColor}`}>キーワード分析</h3>
                     <WordCloud
-                      keywords={analysisData.user.keywords}
+                      keywords={userKeywords}
                       onKeywordClick={handleKeywordClick}
                       theme="light"
                     />
@@ -183,15 +127,16 @@ export default function ResultPage() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <Card className={`overflow-hidden ${secondaryBgColor} border-0`}>
                   <CardContent className="p-0">
-                   <VideoPlayer videoUrl={oppositeVideoUrl || analysisData?.opposite?.videoUrl} theme="dark" />
+                   <VideoPlayer videoUrl={oppositeVideoUrl} theme="dark" />
                   </CardContent>
+                  <p className="text-white px-4 py-6 leading-7">{oppositePerspective}</p>
                 </Card>
 
                 <Card className={`${secondaryBgColor} border-0`}>
                   <CardContent className="p-6">
-                    <h3 className={`text-2xl font-bold mb-4 ${secondaryTextColor}`}>異なる視点のキーワード</h3>
+                    <h3 className={`text-2xl font-bold mb-4 ${secondaryTextColor}`}>キーワード分析</h3>
                     <WordCloud
-                      keywords={analysisData.opposite.keywords}
+                      keywords={oppositeKeywords}
                       onKeywordClick={handleKeywordClick}
                       theme="dark"
                     />
@@ -201,7 +146,7 @@ export default function ResultPage() {
             </TabsContent>
           </Tabs>
 
-          <div className="flex flex-wrap justify-center gap-4 mt-12">
+          <div className="flex flex-wrap justify-center gap-4 mt-12 pb-10">
             <Button
               onClick={handleShare}
               className={`flex items-center gap-2 rounded-full px-6 py-2 ${
@@ -227,61 +172,11 @@ export default function ResultPage() {
       </section>
 
       {selectedKeyword && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
-          onClick={handleCloseArticle}
-        >
-          <Card
-            className={`w-full max-w-2xl ${activeTab === "user" ? "bg-white" : "bg-gray-800"}`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <CardContent className="p-6">
-              <h3 className={`text-2xl font-bold mb-4 ${activeTab === "user" ? "text-black" : "text-white"}`}>
-                {selectedKeyword.text}に関連する記事
-              </h3>
-              <div className="space-y-4">
-                {selectedKeyword.articles.map((article: any, index: number) => (
-                  <a
-                    key={index}
-                    href={article.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`flex items-center gap-4 p-3 rounded-lg transition-colors ${
-                      activeTab === "user" ? "hover:bg-gray-100" : "hover:bg-gray-700"
-                    }`}
-                  >
-                    <img
-                      src={article.image || "/placeholder.svg"}
-                      alt={article.title}
-                      className="w-24 h-16 object-cover rounded"
-                    />
-                    <div>
-                      <h4 className={`font-medium ${activeTab === "user" ? "text-black" : "text-white"}`}>
-                        {article.title}
-                      </h4>
-                      <p className="text-sm text-blue-600">記事を読む →</p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-              <div className="mt-6 text-center">
-                <Button
-                  variant="outline"
-                  onClick={handleCloseArticle}
-                  className={`rounded-full ${
-                    activeTab === "user"
-                      ? "border-black text-black hover:bg-black/10"
-                      : "border-white text-white hover:bg-white/10"
-                  }`}
-                >
-                  閉じる
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+        <KeywordModal
+          selectedKeyword={selectedKeyword}
+          activeTab={activeTab}
+          handleCloseArticle={handleCloseArticle}
+        />
       )}
     </div>
   )
