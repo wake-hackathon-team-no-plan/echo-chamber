@@ -27,10 +27,13 @@ export async function generateMovie(
     
     if (AppConfig.AI_STUB_MODE.MOVIE) {
       console.log('【動画生成】スタブモード: サンプル動画を使用');
-      videoPath = '/videos/sample.mp4';
+      videoPath = '/api/videos/sample.mp4';
     } else {
       // Veo2 APIを呼び出し
-      videoPath = await veoClient.generateVideo(prompt, durationSeconds, aspectRatio);
+      const rawPath = await veoClient.generateVideo(prompt, durationSeconds, aspectRatio);
+      // パスからファイル名を抽出し、APIルートのパスを生成
+      const filename = rawPath.split('/').pop();
+      videoPath = `/api/videos/${filename}`;
     }
     console.log(`【動画生成】OUTPUT: 動画生成完了 - ${videoPath}`);
 

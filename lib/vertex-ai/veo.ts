@@ -71,12 +71,12 @@ export class VeoClient {
         const fileName = `video_${timestamp}.mp4`;
 
         // publicディレクトリに保存
-        const outputDir = path.join(process.cwd(), 'public', 'videos');
+        const outputDir = path.join(process.cwd(), 'tmp', 'videos');
         await fs.ensureDir(outputDir);
         const filePath = path.join(outputDir, fileName);
         await fs.writeFile(filePath, videoBuffer);
 
-        return `/videos/${fileName}`;
+        return `/tmp/videos/${fileName}`;
       }
 
       throw new Error('動画データが含まれていません');
