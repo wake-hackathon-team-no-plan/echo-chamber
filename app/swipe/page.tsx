@@ -125,8 +125,8 @@ export default function SwipePage() {
     }
   };
 
-  // スワイプの状態管理
-  const { currentIndex, handleSwipe } = useCardSwipe({
+  // スワイプの状態管理（isProcessingSwipeも取得）
+  const { currentIndex, handleSwipe, isProcessingSwipe } = useCardSwipe({
     cards,
     onComplete: handleComplete,
   });
@@ -203,6 +203,7 @@ export default function SwipePage() {
               cards={cards}
               currentIndex={currentIndex}
               onSwipe={handleSwipe}
+              isProcessingSwipe={isProcessingSwipe} // 追加: スワイプ処理中フラグを渡す
             />
           </div>
 
@@ -213,7 +214,7 @@ export default function SwipePage() {
               size="lg"
               className="rounded-full w-16 h-16 p-0 border-2 border-[#ff6347] text-[#ff6347] hover:bg-[#ff6347]/10"
               onClick={() => handleSwipe("left")}
-              disabled={isCompleted || isGenerating}
+              disabled={isCompleted || isGenerating || isProcessingSwipe}
             >
               <X size={32} />
             </Button>
@@ -222,7 +223,7 @@ export default function SwipePage() {
               size="lg"
               className="rounded-full w-16 h-16 p-0 border-2 border-[#00c896] text-[#00c896] hover:bg-[#00c896]/10"
               onClick={() => handleSwipe("right")}
-              disabled={isCompleted || isGenerating}
+              disabled={isCompleted || isGenerating || isProcessingSwipe}
             >
               <Check size={32} />
             </Button>
@@ -234,7 +235,7 @@ export default function SwipePage() {
               variant="ghost"
               className="text-gray-500 hover:text-gray-700"
               onClick={() => router.push("/perspective")}
-              disabled={isGenerating}
+              disabled={isGenerating || isProcessingSwipe}
             >
               スキップして次へ進む
             </Button>
