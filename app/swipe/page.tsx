@@ -15,6 +15,7 @@ import { LoadingOverlay } from "@/components/ui/loadingOverlay";
 import { generateResultsText } from "@/app/actions/generate-results-text";
 import { generateMoviePrompt } from "@/app/actions/generate-movie-prompt-text";
 import { generateMovie } from "../actions/generate-movie";
+import { generatePerspective } from "../actions/generate-perspective";
 
 type GeneratePromptResponse = {
   prompt?: string;
@@ -97,48 +98,19 @@ export default function SwipePage() {
       setError(null);
       setSavedAnswers(answers);
 
-      const oppositeAnswers = createOppositeAnswers(answers);
+      const selectedTheme = localStorage.getItem("selectedThemes");
+      if (!selectedTheme) {
+        throw new Error("テーマが選択されていません");
+      }
 
-      const generateMovieProcess = async (answers: SwipeAnswer[]) => {
-        const selectedTheme = localStorage.getItem("selectedThemes");
-
-        if (!selectedTheme) {
-          throw new Error("テーマが選択されていません");
-        }
-
-        const movieGenerationPrompt = await generatePrompt(answers);
-
-        // 動画生成
-        const videoPath = await generateMovieContent(movieGenerationPrompt);
-
-        return videoPath;
-      };
-
-      const [
-        userVideoURL,
-        oppositeVideURL,
-        userKeywordsResult,
-        oppositeKeywordsResult,
-      ] = await Promise.all([
-        generateMovieProcess(answers),
-        generateMovieProcess(oppositeAnswers),
-        generateKeywords(answers),
-        generateKeywords(oppositeAnswers),
-      ]);
-
-      // 結果を保存
-      const results = {
-        user: {
-          keywords: userKeywordsResult.keywords,
-          perspective: userKeywordsResult.perspective,
-          videoUrl: userVideoURL
-        },
-        opposite: {
-          keywords: oppositeKeywordsResult.keywords,
-          perspective: oppositeKeywordsResult.perspective,
-          videoUrl: oppositeVideURL
-        }
-      };
+      // 1つのServer Actionですべての処理を並列実行
+      const results = await generatePerspective(selectedTheme, answers);
+      
+      // エラーチェック
+      if ('error' in results) {
+        throw new Error(results.error);
+      }
+    
       localStorage.setItem("results", JSON.stringify(results));
 
       router.push("/perspective");
