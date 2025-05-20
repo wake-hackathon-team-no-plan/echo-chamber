@@ -126,27 +126,20 @@ export default function SwipePage() {
         generateKeywords(oppositeAnswers),
       ]);
 
-      // 自分の価値観
-      localStorage.setItem("userVideoPath", userVideoURL || "");
-      localStorage.setItem(
-        "userKeywords:",
-        JSON.stringify(userKeywordsResult.keywords) || ""
-      );
-      localStorage.setItem(
-        "userPerspective:",
-        userKeywordsResult.perspective || ""
-      );
-
-      // 他人の価値観
-      localStorage.setItem("oppositeVideoPath", oppositeVideURL || "");
-      localStorage.setItem(
-        "oppositeKeywords:",
-        JSON.stringify(oppositeKeywordsResult.keywords) || ""
-      );
-      localStorage.setItem(
-        "oppositePerspective:",
-        oppositeKeywordsResult.perspective || ""
-      );
+      // 結果を保存
+      const results = {
+        user: {
+          keywords: userKeywordsResult.keywords,
+          perspective: userKeywordsResult.perspective,
+          videoUrl: userVideoURL
+        },
+        opposite: {
+          keywords: oppositeKeywordsResult.keywords,
+          perspective: oppositeKeywordsResult.perspective,
+          videoUrl: oppositeVideURL
+        }
+      };
+      localStorage.setItem("results", JSON.stringify(results));
 
       router.push("/perspective");
     } catch (error) {

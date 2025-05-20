@@ -10,23 +10,6 @@ export default function PerspectivePage() {
 
   const handleSelectPerspective = () => {
     router.push("/result")
-
-    // rm later　‼️
-    // ✅ 一時的なデモ用のコードです。
-  const results = {
-    user: {
-      keywords: ["ワクワク学習","内発的動機づけ","楽しい教育","学びの自走化","宿題は習慣","創造的思考","自由な学びの場","主体性","好奇心ドリブン","正解主義からの脱却",],
-      perspective: "「学びって本来めっちゃ楽しいものじゃない？」って思ってる人。努力よりワクワクが大事で、「これが正解！」って押しつけられるのはちょっと違う。宿題とかはやるけど、やらされ感じゃなく、自分から学びたくなる環境をつくりたい派。",
-      videoUrl: "/videos/sample.mp4"
-    },
-    opposite: {
-      keywords: ["効率と成果", "結果重視", "努力と我慢", "教師主導", "宿題の廃止", "詰め込み型教育", "画一的カリキュラム", "ルール遵守", "学習管理", "学力テスト中心"],
-      perspective: "「学びには厳しい努力が欠かせない」と信じる人。楽しさより規律と忍耐が重要で、明確な正解と基準があってこそ成長できる。宿題は当然のことで、多少やらされ感があっても、人生で成功するには時に自分の好きなことより必要なことを優先する姿勢が大切だと考える派。",
-      videoUrl: "/videos/sampleOpposite.mp4"
-    }
-  }
-  localStorage.setItem("results", JSON.stringify(results))
-
   }
 
   return (
