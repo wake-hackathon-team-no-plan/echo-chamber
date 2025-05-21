@@ -42,12 +42,12 @@ export default function ApiTestForm() {
   ];
   
   // 動画プロンプト生成用の状態
-  const [moviePromptTheme, setMoviePromptTheme] = useState('家族');
+  const [moviePromptTheme, setMoviePromptTheme] = useState(''); // 初期値を空に変更
   const [moviePromptViewpoints, setMoviePromptViewpoints] = useState<Viewpoint[]>(initialViewpoints);
   const [moviePromptResult, setMoviePromptResult] = useState('');
 
   // 結果生成用の状態
-  const resultsTheme = '家族'; // 固定値
+  const [resultsTheme, setResultsTheme] = useState(''); // 初期値を空に変更
   const [resultsViewpoints, setResultsViewpoints] = useState<Viewpoint[]>(initialViewpoints);
   const [keywords, setKeywords] = useState<string[]>([]);
   const [perspective, setPerspective] = useState('');
@@ -92,6 +92,14 @@ export default function ApiTestForm() {
         setError(response.error);
       } else {
         setTextResult(response.text);
+
+        // 生成されたテキストを結果生成APIと動画プロンプト生成APIの価値観に反映
+        const updatedViewpoints = response.text.map((text) => ({
+          viewpoint: text,
+          resonates: true,
+        }));
+        setResultsViewpoints(updatedViewpoints);
+        setMoviePromptViewpoints(updatedViewpoints);
       }
     } catch (err) {
       setError('エラーが発生しました');
@@ -187,6 +195,16 @@ export default function ApiTestForm() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // テーマ選択のハンドラを再利用
+  const handleResultsThemeSelect = (selectedTheme: string) => {
+    setResultsTheme(selectedTheme);
+  };
+
+  // テーマ選択のハンドラを再利用
+  const handleMoviePromptThemeSelect = (selectedTheme: string) => {
+    setMoviePromptTheme(selectedTheme);
   };
 
   return (
@@ -285,18 +303,33 @@ export default function ApiTestForm() {
         <h2 className="text-2xl font-bold mb-4">動画プロンプト生成API テスト</h2>
         <form onSubmit={handleMoviePromptGeneration} className="space-y-4">
           <div>
-            <label className="block mb-2">
-              テーマ（固定）
-            </label>
-            <div className="p-2 bg-gray-100 rounded">
-              {moviePromptTheme}
+            <label className="block mb-2">テーマを選択</label>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {themes.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => handleMoviePromptThemeSelect(t)}
+                  className={`px-4 py-2 rounded ${
+                    moviePromptTheme === t
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-200 hover:bg-gray-300'
+                  }`}
+                  disabled={isLoading}
+                >
+                  {t}
+                </button>
+              ))}
             </div>
+            {moviePromptTheme && (
+              <div className="mt-2">
+                <p>選択中のテーマ: <strong>{moviePromptTheme}</strong></p>
+              </div>
+            )}
           </div>
 
           <div>
-            <label className="block mb-2">
-              価値観（固定）
-            </label>
+            <label className="block mb-2">価値観（固定）</label>
             <div className="space-y-2">
               {moviePromptViewpoints.map((vp, index) => (
                 <div key={index} className="p-2 rounded flex justify-between items-center space-x-2">
@@ -337,9 +370,7 @@ export default function ApiTestForm() {
           </div>
 
           <div>
-            <label htmlFor="moviePromptTemperature" className="block mb-2">
-              Temperature
-            </label>
+            <label htmlFor="moviePromptTemperature" className="block mb-2">Temperature</label>
             <input
               type="number"
               id="moviePromptTemperature"
@@ -355,7 +386,7 @@ export default function ApiTestForm() {
 
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || !moviePromptTheme}
             className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-400"
           >
             {isLoading ? '生成中...' : 'プロンプト生成'}
@@ -378,11 +409,30 @@ export default function ApiTestForm() {
         <form onSubmit={handleResultsGeneration} className="space-y-4">
           <div>
             <label className="block mb-2">
-              テーマ（固定）
+              テーマを選択
             </label>
-            <div className="p-2 bg-gray-100 rounded">
-              {resultsTheme}
+            <div className="flex flex-wrap gap-2 mb-4">
+              {themes.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => handleResultsThemeSelect(t)}
+                  className={`px-4 py-2 rounded ${
+                    resultsTheme === t
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-200 hover:bg-gray-300'
+                  }`}
+                  disabled={isLoading}
+                >
+                  {t}
+                </button>
+              ))}
             </div>
+            {resultsTheme && (
+              <div className="mt-2">
+                <p>選択中のテーマ: <strong>{resultsTheme}</strong></p>
+              </div>
+            )}
           </div>
 
           <div>
@@ -447,7 +497,7 @@ export default function ApiTestForm() {
 
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || !resultsTheme}
             className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-400"
           >
             {isLoading ? '生成中...' : '結果生成'}

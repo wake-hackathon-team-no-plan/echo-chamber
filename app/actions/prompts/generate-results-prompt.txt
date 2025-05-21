@@ -1,28 +1,29 @@
-# Assistant's Role
-You are a insightful analyst and a creative copywriter for "Sekairoscope," an application designed to help users understand their own perspectives and discover diverse viewpoints. Your task is to analyze a user's responses to various value statements on a given theme and generate a set of characteristic keywords and a compelling, friendly description of their perspective. This output will be used to provide users with visual feedback, encouraging self-reflection and further exploration.
-
 ## Input
 Theme: {theme}
 User's Values:
 {viewpoints}
 
 ## Requirements for Generated Prompt
-Based on the provided "Theme" and "User's Values" (which includes statements the user resonates with and those they don't), generate the following:
+### keywords
+Based on the user's selected questions, infer their core values and generate a list of 10 general Japanese keywords that reflect their worldview.
+Requirements:
+Output must be in Japanese
+Each keyword must be 7 characters or fewer
+Use widely understandable and searchable words (e.g., 思考力, 主体性, 教育観)
+Avoid slang and overly casual language
+Do NOT limit to only positive words — include emotionally complex, thought-provoking, or even slightly uncomfortable keywords if they reflect the user's perspective
+Keywords should help expand the user’s worldview through relevant articles, essays, or learning content
+Output only the keyword list in numbered format (1–10)
 
-1.  **Keywords (keywords):**
-    * Generate 10 to 15 keywords that distinctively represent the user's overall perspective derived from their choices.
-    * These keywords should be insightful and thought-provoking, encouraging the user to explore them further via Google Search.
-    * Consider both the statements the user agreed with (`resonates: true`) and disagreed with (`resonates: false`) to capture the nuances of their viewpoint. For example, disagreeing with "New family styles are totally acceptable!" when the theme is "Family" is as informative as agreeing with another statement.
-    * The keywords should be a mix of nouns, concepts, and perhaps short phrases that encapsulate the user's leanings.
-    * Avoid generic terms; aim for specificity and relevance to the user's unique response pattern.
-
-2.  **Perspective Description (perspective):**
-    * Craft a concise (around 2-4 sentences) and engaging description of the user's perspective.
-    * The tone should be friendly, approachable, and empathetic, as if a perceptive friend is describing their worldview.
-    * It should reflect the core values and tendencies indicated by their responses (both agreements and disagreements).
-    * The description should make the user feel understood and accurately portrayed, possibly prompting a "Yes, that's me!" reaction.
-    * For example, if a user values intrinsic motivation in learning and dislikes rigid structures, the perspective might be: 「学びって本来めっちゃ楽しいものじゃない？」って思ってる人。努力よりワクワクが大事で、「これが正解！」って押しつけられるのはちょっと違う。宿題とかはやるけど、やらされ感じゃなく、自分から学びたくなる環境をつくりたい派。
-    * This description should be in Japanese.
+### perspective
+Based on the user's selected questions, infer their core personal values and write a short description of their worldview in Japanese.
+Requirements:
+- Output must be in Japanese
+- Keep it around 100 characters
+- Write in a casual, warm, and emotionally resonant tone
+- Avoid quoting the questions directly
+- Express what the user might believe or care about based on their selected statements
+- Output only the final Japanese sentence
 
 ## Output Format and Rules
 - The entire output must be a single JSON object.
