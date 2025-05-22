@@ -1,32 +1,27 @@
-# Assistant's Role
-You are an assistant who generates new expressions and outputs based on values the user resonates with.
-You will analyze the input "theme" and "user's values" (specifically, which viewpoints they resonate or do not resonate with) to generate a prompt for creating a video of an **original and immersive 3D world** that matches the user's worldview.
-
 ## Input
 Theme: {theme}
 User's Values:
 {viewpoints}
 
 ## Requirements for Generated Prompt
-- Primarily reflect values that the user resonates with (where `resonates: true`). 
-Explicitly depict values the user does not resonate with (where resonates: false) by representing them through contrasting or negative visual metaphors and symbolic environments. These depictions should clearly signal their undesirable nature to the user, either through visual dissonance, decay, oppression, or other negative connotations. While including these non-resonating values, ensure they are visually distinct from the positively represented values and contribute to a broader narrative that may explore themes of conflict, contrast, or the rejection of these values. Do not present these values in a positive or appealing light.
-- Deeply analyze the underlying meanings, emotions, and associated imagery of each resonating value. **Effectively translate these insights into scenes where stylized characters interact with or are situated within symbolic environments, alongside distinct visual metaphors or objects that collectively represent the value. The focus should be on this interplay, not solely on the characters themselves.**
-- **The 3D world itself should be a primary expression of the user's worldview. Describe how the environment's atmosphere, structure, and symbolic elements reflect the core values, with characters acting as inhabitants or activators within this meaning-laden space.**
-- **Ensure a consistent narrative or concept throughout the entire prompt by connecting the expressions of individual values to build a harmonious and cohesive worldview.**
-- Strive for visually appealing and **emotionally evocative, artistic expressions** that capture the essence of the theme.
-- The output prompt must be in English.
-- **The generated prompt must explicitly include terms like "3D rendered world," "immersive 3D environment," or similar phrases indicating a 3D space. Proactively suggest and describe specific styles and atmospheres for this 3D world (e.g., fantasy, sci-fi, surreal, photorealistic, cel-shaded, vaporwave, whimsical, dark fantasy, utopian, dystopian, etc.).**
-- **Specify character styles clearly. If characters are present, describe their appearance to be non-realistic and stylized, like '3D toy-like figures,' 'figurines,' 'mannequins,' 'abstract humanoid shapes,' 'glowing silhouettes,' or 'stylized low-poly characters.' Explicitly state that characters should NOT be 'photorealistic humans.'**
-- **Ensure the character style is consistent with and complements the overall artistic style of the 3D world.**
-- **While characters are important for representing the user's values, ensure their depiction is balanced with the expressiveness of the environment and other symbolic elements. The goal is a holistic visualization of the worldview, where characters are one integral part of a larger tapestry.**
-- **Enrich the visual details. Include suggestions for camera angles, camera movement (e.g., shots that frame characters within their symbolic environment, establishing shots that emphasize the world's mood and its relation to the values, medium shots showing character interaction with symbolic objects, rather than constant close-ups on characters), lighting quality (e.g., soft morning light, dramatic chiaroscuro, neon glows, bioluminescent flora), color palettes, and textural qualities, enabling the video generation AI to render a vivid image.**
-- Adjust the length of the prompt by referencing the example. It should contain sufficient detail for the video generation AI while remaining concise enough for easy processing.
-
-## Example
-The following is an example for the theme "Family." Generate a prompt in a similar style and level of detail, adhering to the "Requirements for Generated Prompt" outlined above:
-{
-  "movieGenerationPrompt": "A whimsical 3D world floating in soft pink and lavender skies, with several cozy floating islands connected by glowing heart-shaped bridges. Each island represents a different aspect of family values. One island shows two characters far apart, yet connected by a glowing thread of light between their hearts. Another has a picnic scene where everyone is sitting freely, without fixed seats or roles, enjoying each other's presence. A third island has a giant ear-shaped sculpture surrounded by bubbles with dialogue icons, symbolizing listening and conversation. One area displays a playful, upside-down house with a sign that says \"normal?\"—questioning traditional ideas of family. The whole world is surrounded by floating pillows, blankets, and twinkling stars, creating a warm, relaxed atmosphere. No harsh lines, everything is soft, round, and magical."
-}
+Based on the user’s selected value-based question, create a 3D miniature world that visually represents the emotional meaning behind it. The world should feel like a tiny handcrafted diorama — dreamlike, cute, and full of symbolic elements.
+Write a vivid 200–300 word English description of this world. 
+Make sure the visuals are tailored to the theme of the question, and express it in a cute and emotionally resonant way — as if the viewer is stepping into someone’s heart made visible.
+Include the following:
+A symbolic representation of the theme of the question (e.g. for identity: a floating mirror garden, for love: a glowing heart-shaped forest)
+Camera movement (e.g. soft zoom, slow drift, or gentle pan across symbolic elements)
+**Important:** 
+You must NOT generate any images. 
+This is a text-only task — output one descriptive English text (200–300 words) that captures the 3D visual scene. 
+Do not include narration, voiceover, or metadata — only a single descriptive passage in natural English. 
+The goal is to visualize a person’s emotional worldview as a cute, symbolic 3D miniature fantasy.
+---
+【Example Output – Theme: Education】 
+(Note: The following is a sample output text for reference. Your task is to generate similar descriptions based on other value-based questions.)
+A whimsical 3D floating world drifts gently through a pastel sky — this is the Realm of Wonderment. Here, curiosity is the compass, and every corner invites exploration. A giant library shaped like a glowing question mark spins slowly in mid-air, its shelves filled with books that whisper ideas when opened. Next to it, a transparent classroom powered by a heart-shaped crystal floats without walls — no boundaries, only possibilities.
+Children soar through the air on oversized flying notebooks, laughing as they leave glittering trails of stardust behind. Below them, rolling hills bloom with gigantic open books, their pages turning slowly in the breeze. Ideas sprout like flowers, and thought-bubbles float up like soap balloons, bursting with new questions.
+In one corner stands the “Joy Reactor” — a playful machine that beams rainbow light into the sky every time someone discovers something that makes their eyes sparkle. No desks. No grades. Only a soft sense of wonder, and the magic of intrinsic motivation.
+The camera slowly floats above the scene, circling gently to reveal each joyful detail — from the twinkling towers of imagination to the field of dreams glowing in soft morning light. This is a place where learning is not required… it’s irresistible.
 
 ## Output Format and Rules
 - The generated video prompt (the value of "movieGenerationPrompt") must be in English.
