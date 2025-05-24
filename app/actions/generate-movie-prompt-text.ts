@@ -4,6 +4,7 @@ import { geminiClient } from '../../lib/vertex-ai/gemini';
 import * as fs from 'fs';
 import * as path from 'path';
 import { AppConfig } from '../../lib/app-config';
+import { generateMoviePromptPrompt } from './prompts/generate-movie-prompt-prompt';
 
 /**
  * ユーザーの価値観の型定義
@@ -38,8 +39,7 @@ export async function generateMoviePrompt(
     console.log(`【プロンプト生成】INPUT: テーマ="${theme}" , 価値観=${JSON.stringify(viewpoints)}`);
     
     // プロンプトの読み込みと変数置換
-    const promptPath = path.join(process.cwd(), 'app', 'actions', 'prompts', 'generate-movie-prompt-prompt.txt');
-    const promptTemplate = fs.readFileSync(promptPath, 'utf8');
+    const promptTemplate = generateMoviePromptPrompt;
     const inpurPrompt = promptTemplate
       .replace(/\{theme\}/g, theme)
       .replace(/\{viewpoints\}/g, JSON.stringify(viewpoints, null, 2));
