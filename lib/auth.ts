@@ -1,6 +1,4 @@
 import { GoogleAuth } from 'google-auth-library';
-import * as fs from 'fs-extra';
-import path from 'path';
 
 // GoogleAuth インスタンスを提供するクラス
 export class GoogleAuthProvider {
@@ -9,12 +7,26 @@ export class GoogleAuthProvider {
   // シングルトンパターンでインスタンスを取得
   public static getInstance(): GoogleAuth {
     if (!GoogleAuthProvider.instance) {
-      const keyPath = path.join(process.cwd(), 'key', 'sekairoscope-3177be258b29.json');
+      // 環境変数からサービスアカウントキーを取得
+      const serviceAccountKey = process.env.GCP_SERVICE_ACCOUNT_KEY;
       
-      GoogleAuthProvider.instance = new GoogleAuth({
-        keyFile: keyPath,
-        scopes: ['https://www.googleapis.com/auth/cloud-platform'],
-      });
+      if (!serviceAccountKey) {
+        throw new Error('GCP_SERVICE_ACCOUNT_KEY環境変数が設定されていません');
+      }
+      
+      try {
+        // Base64エンコードされたキーをデコード
+        const decodedKey = Buffer.from(serviceAccountKey, 'base64').toString('utf8');
+        const credentials = JSON.parse(decodedKey);
+        
+        GoogleAuthProvider.instance = new GoogleAuth({
+          credentials,
+          scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+        });
+      } catch (error) {
+        console.error('サービスアカウントキーの解析に失敗:', error);
+        throw new Error('GCP_SERVICE_ACCOUNT_KEYの形式が正しくありません');
+      }
     }
     
     return GoogleAuthProvider.instance;
