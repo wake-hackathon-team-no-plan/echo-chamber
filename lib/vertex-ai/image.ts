@@ -211,8 +211,8 @@ export class ImageGenerationClient {
         const fileName = `image_${timestamp}.${extension}`;
 
         // tmpディレクトリに保存
-        //const outputDir = path.join(process.cwd(), 'tmp', 'images');
-        const outputDir = '/tmp/images';
+        const outputDir = path.join(process.cwd(), 'tmp', 'images');
+        //const outputDir = '/tmp/images';
         await fs.ensureDir(outputDir);
         const filePath = path.join(outputDir, fileName);
         await fs.writeFile(filePath, imageBuffer);
