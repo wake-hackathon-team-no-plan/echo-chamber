@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import type { SwipeAnswer } from "./useCardSwipe"
 
 type ResultData = {
   keywords: string[]
@@ -12,22 +13,26 @@ type ResultData = {
 type Results = {
   user: ResultData | null
   opposite: ResultData | null
+  swipeAnswers: SwipeAnswer[] | null
 }
 
 const fetchResults = async (): Promise<Results> => {
   try {
-    const stored = localStorage.getItem("results")
-    if (stored) {
-      const parsed = JSON.parse(stored)
+    const storedResults = localStorage.getItem("results")
+    const storedAnswers = localStorage.getItem("swipeAnswers")
+
+    if (storedResults) {
+      const parsed = JSON.parse(storedResults)
       return {
         user: parsed.user || null,
         opposite: parsed.opposite || null,
+        swipeAnswers: storedAnswers ? JSON.parse(storedAnswers) : null,
       }
     }
-    return { user: null, opposite: null }
+    return { user: null, opposite: null, swipeAnswers: storedAnswers ? JSON.parse(storedAnswers) : null }
   } catch (error) {
     console.error("結果データ取得エラー:", error)
-    return { user: null, opposite: null }
+    return { user: null, opposite: null, swipeAnswers: null }
   }
 }
 

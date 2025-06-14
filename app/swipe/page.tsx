@@ -112,6 +112,7 @@ export default function SwipePage() {
       }
     
       localStorage.setItem("results", JSON.stringify(results));
+      localStorage.setItem("swipeAnswers", JSON.stringify(answers));
 
       router.push("/perspective");
     } catch (error) {

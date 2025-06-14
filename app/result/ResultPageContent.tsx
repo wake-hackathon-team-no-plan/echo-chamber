@@ -68,7 +68,7 @@ export default function ResultPageContent() {
   const handleRestart = () => {
     // ローカルストレージをクリアして最初から始める
     localStorage.removeItem("selectedThemes")
-    localStorage.removeItem("responses")
+    localStorage.removeItem("swipeAnswers")
     localStorage.removeItem("generatedCards")
     localStorage.removeItem("results")
     router.push("/")

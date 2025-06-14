@@ -134,11 +134,16 @@ export default function VoiceChat({ results, onBackToResults }: VoiceChatProps) 
     if (results && !isInitialized) {
       const userPerspective = results.user?.perspective || "";
       const oppositePerspective = results.opposite?.perspective || "";
+      const swipeAnswersArr = results.swipeAnswers || [];
+      const swipeAnswersStr = Array.isArray(swipeAnswersArr) && swipeAnswersArr.length > 0
+        ? swipeAnswersArr.map((a: any) => `${a.viewpoint}:${a.resonates ? "共感" : "非共感"}`).join(" / ")
+        : "";
       // voiceName を localStorage (results.opposite.voiceName) から取得。無ければデフォルト "Aoede"
       const oppositeVoiceName = results.opposite?.voiceName || "Aoede";
 
       const systemPrompt = SYSTEM_PROMPT
         .replace("{{userPerspective}}", userPerspective)
+        .replace("{{swipeAnswers}}", swipeAnswersStr)
         .replace("{{oppositePerspective}}", oppositePerspective);
       const config: LiveConnectConfig = {
         responseModalities: [Modality.AUDIO],
