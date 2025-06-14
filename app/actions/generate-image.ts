@@ -66,13 +66,13 @@ export async function generateImage(
       const filename = result.imagePath.split('/').pop();
       imageDataUrl = `/api/images/${filename}`;      text = result.text; // テキストがある場合は取得 
     }    // テキストから性別を判定
-    let gender: 'female' | 'male' = 'male'; // デフォルトは male
+    let gender: 'female' | 'male' = 'female'; // デフォルトは female
     if (text) {
       const lowerText = text.toLowerCase();
-      if (lowerText.includes('female')) {
-        gender = 'female';
+      if (lowerText.includes('male')) {
+        gender = 'male';
       }
-      // male が含まれている場合は既にデフォルトが male なのでそのまま
+      // female が含まれている場合は既にデフォルトが female なのでそのまま
     }
 
     // 性別に応じて音声名をランダムに選択
