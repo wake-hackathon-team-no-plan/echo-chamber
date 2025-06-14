@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   
   // tmpディレクトリから動画を取得
   //const videoPath = path.join(process.cwd(), 'tmp', 'videos', filename as string);
-  const videoPath = path.join('/public', 'videos', filename as string);
+  const videoPath = path.join('/tmp', 'videos', filename as string);
   
   try {
     // ファイルの存在を確認
