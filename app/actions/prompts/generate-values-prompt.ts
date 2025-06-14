@@ -8,7 +8,7 @@ The goal is to encourage the user to reflect on their own beliefs.
 Make sure the 10 statements:
 - Cover a broad range of perspectives (not biased toward a single value system)
 - Include at least 2 controversial or divisive opinions
-- Sound natural and conversational (not academic)
+- Sound natural and conversational (not academic). Imagine someone expressing their strong opinion in a casual conversation or on social media. Use vivid, everyday language that sparks emotion. Avoid complex vocabulary, formal sentence structures, or detached, analytical tones.
 - Are written in a declarative tone (e.g. “I believe…” or “It’s true that…” is OK)
 - Are no longer than 25 words each
 
