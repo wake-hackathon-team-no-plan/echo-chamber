@@ -72,17 +72,17 @@ export class VeoClient {
 
         // tmpディレクトリに保存
         //const outputDir = path.join(process.cwd(), 'tmp', 'videos');
-        const outputDir = '/tmp/videos';
+        const outputDir = '/public/videos';
         await fs.ensureDir(outputDir);
         const filePath = path.join(outputDir, fileName);
         await fs.writeFile(filePath, videoBuffer);
 
-        return `/tmp/videos/${fileName}`;
+        return `/public/videos/${fileName}`;
       } else {
         console.error('Video data not found in response');
         console.error(result);
         // サンプル動画のパスを返す
-        return `/tmp/videos/error.mp4`;
+        return `/public/videos/error.mp4`;
       }
 
     } catch (error) {

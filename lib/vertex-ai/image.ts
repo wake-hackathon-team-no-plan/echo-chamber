@@ -212,7 +212,7 @@ export class ImageGenerationClient {
 
         // tmpディレクトリに保存
         //const outputDir = path.join(process.cwd(), 'tmp', 'images');
-        const outputDir = '/tmp/images';
+        const outputDir = '/public/images';
         await fs.ensureDir(outputDir);
         const filePath = path.join(outputDir, fileName);
         await fs.writeFile(filePath, imageBuffer);
@@ -222,7 +222,7 @@ export class ImageGenerationClient {
         
         // 結果を作成
         const result: { imagePath: string; text?: string } = {
-          imagePath: `/tmp/images/${fileName}`
+          imagePath: `/public/images/${fileName}`
         };
         
         if (combinedText) {
