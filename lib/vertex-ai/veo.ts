@@ -71,7 +71,8 @@ export class VeoClient {
         const fileName = `video_${timestamp}.mp4`;
 
         // tmpディレクトリに保存
-        const outputDir = path.join(process.cwd(), 'tmp', 'videos');
+        //const outputDir = path.join(process.cwd(), 'tmp', 'videos');
+        const outputDir = '/tmp/videos';
         await fs.ensureDir(outputDir);
         const filePath = path.join(outputDir, fileName);
         await fs.writeFile(filePath, videoBuffer);

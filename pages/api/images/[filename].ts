@@ -11,7 +11,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { filename } = req.query;
   
   // tmpディレクトリから画像を取得
-  const imagePath = path.join(process.cwd(), 'tmp', 'images', filename as string);
+  //const imagePath = path.join(process.cwd(), 'tmp', 'images', filename as string);
+  const imagePath = path.join('/tmp', 'images', filename as string);
   
   try {
     // ファイルの存在を確認
