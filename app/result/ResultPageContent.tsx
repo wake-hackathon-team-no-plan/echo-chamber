@@ -156,7 +156,6 @@ export default function ResultPageContent() {
                     <VideoPlayer videoUrl={userVideoUrl} theme="light" />
                   </CardContent>
                   <p className="px-4 py-6 leading-7">{userPerspective}</p>
-                  <img src={userImageUrl} alt="User Perspective" className="w-full h-auto" />
                 </Card>
 
                 <Card className={`${secondaryBgColor} border-0`}>
@@ -207,11 +206,7 @@ export default function ResultPageContent() {
                     <VideoPlayer videoUrl={oppositeVideoUrl} theme="dark" />
                   </CardContent>
                   {!fromVoice && oppositeVideoUrl && (
-                    <AICard
-                      imageUrl={oppositeImageUrl}
-                      text={oppositePerspective}
-                      voiceName={voiceName}
-                    />
+                    <AICard imageUrl={oppositeImageUrl} text={oppositePerspective} voiceName={voiceName} />
                   )}
                 </Card>
 
