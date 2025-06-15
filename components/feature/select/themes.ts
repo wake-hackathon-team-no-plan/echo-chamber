@@ -17,7 +17,7 @@ export const allThemes: Theme[] = [
   { id: 3, title: "環境問題", iconName: "EcoOutlined" },
   { id: 4, title: "テクノロジー", iconName: "ComputerOutlined" },
   { id: 5, title: "教育", iconName: "School" },
-  { id: 6, title: "健康", iconName: "FavoriteBorder" },
+  { id: 6, title: "家族", iconName: "FavoriteBorder" },
   { id: 7, title: "エンターテイメント", iconName: "MovieOutlined" },
   { id: 8, title: "スポーツ", iconName: "EmojiEvents" },
   { id: 9, title: "科学", iconName: "Science" },
