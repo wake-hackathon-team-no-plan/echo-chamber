@@ -43,16 +43,18 @@ export async function generateImage(
     // プロンプトテンプレートに世界観の説明を埋め込み
     const prompt = generateImagePromptTemplate.replace(/\{worldviewDescription\}/g, worldviewDescription);
     
-    console.log(`【画像生成】INPUT: 世界観="${worldviewDescription}"`);
+    //console.log(`【画像生成】INPUT: 世界観="${worldviewDescription}"`);
     console.log(`【画像生成】プロンプト: ${prompt}`);
 
     let imageDataUrl: string;
     let text: string | undefined;
-      if (AppConfig.AI_STUB_MODE.IMAGE) {
+    let gender: 'female' | 'male' = 'male'; // デフォルトは female
+    if (AppConfig.AI_STUB_MODE.IMAGE) {
       console.log('【画像生成】スタブモード: サンプル画像を使用');
       // スタブモードではサンプル画像のパスを返す
       imageDataUrl = '/api/images/sample1.png';
       text = undefined; // スタブモードではテキストは返さない
+      gender = 'female';
     } else {
       // Image Generation APIを呼び出し
       const result = await imageGenerationClient.generateImage(prompt, {
@@ -64,15 +66,14 @@ export async function generateImage(
       
       // パスからファイル名を抽出し、APIルートのパスを生成
       const filename = result.imagePath.split('/').pop();
-      imageDataUrl = `/api/images/${filename}`;      text = result.text; // テキストがある場合は取得 
-    }    // テキストから性別を判定
-    let gender: 'female' | 'male' = 'male'; // デフォルトは female
-    if (text) {
-      const lowerText = text.toLowerCase();
-      if (lowerText.includes('female')) {
-        gender = 'female';
+      imageDataUrl = `/api/images/${filename}`;
+      text = result.text; // テキストがある場合は取得 
+      if (text) {
+        const lowerText = text.toLowerCase();
+        if (lowerText.includes('female')) {
+          gender = 'female';
+        }
       }
-      // male が含まれている場合は既にデフォルトが male なのでそのまま
     }
 
     // 性別に応じて音声名をランダムに選択

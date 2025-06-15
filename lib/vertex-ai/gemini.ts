@@ -62,7 +62,7 @@ export class GeminiClient {
       try {
         // JSONとして直接解析
         const data: GeminiResponse = await response.json();
-        console.log('API Response:', JSON.stringify(data, null, 2));
+        //console.log('API Response:', JSON.stringify(data, null, 2));
 
         // レスポンスの検証
         if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {

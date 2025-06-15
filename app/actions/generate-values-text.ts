@@ -30,7 +30,7 @@ export async function generateValuesText(
     } else {
       prompt = generateValuesPromptTemplate.replace(/\{theme\}/g, theme);
     }
-      console.log(`【価値観生成】プロンプト: ${prompt}`);
+    // console.log(`【価値観生成】プロンプト: ${prompt}`);
 
     let responseText;    
     if (AppConfig.AI_STUB_MODE.VALUES_TEXT) {

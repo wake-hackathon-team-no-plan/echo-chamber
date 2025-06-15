@@ -134,7 +134,7 @@ export class ImageGenerationClient {
           }
         );
         
-        console.log('Raw API Response (Base64 data truncated):', truncatedResponse);        // JSONレスポンスを解析（配列またはオブジェクト）
+        // console.log('Raw API Response (Base64 data truncated):', truncatedResponse);        // JSONレスポンスを解析（配列またはオブジェクト）
         const responseData = JSON.parse(responseText);
         let foundImage: GeneratedImage | null = null;
         
@@ -145,17 +145,17 @@ export class ImageGenerationClient {
         let imageData: { data: string; mimeType: string } | null = null;
         
         for (const data of responseArray) {
-          console.log('=== Processing Response ===');
+          //console.log('=== Processing Response ===');
             // candidatesがある場合の詳細出力
           if (data.candidates) {
             data.candidates.forEach((candidate: any, index: number) => {
-              console.log(`--- Candidate ${index} ---`);
-              console.log(`finishReason: ${candidate.finishReason || 'undefined'}`);
+              //console.log(`--- Candidate ${index} ---`);
+              //console.log(`finishReason: ${candidate.finishReason || 'undefined'}`);
               
               // partsがある場合の詳細出力
               if (candidate.content?.parts) {
                 candidate.content.parts.forEach((part: any, partIndex: number) => {
-                  console.log(`  Part ${partIndex}:`);
+                  //console.log(`  Part ${partIndex}:`);
                   
                   // textがある場合のみ出力と収集
                   if (part.text) {
@@ -184,15 +184,7 @@ export class ImageGenerationClient {
               }
             });
           }
-          
-          // usageMetadataがある場合のみ出力
-          if (data.usageMetadata) {
-            console.log('--- Usage Metadata ---');
-            console.log(`promptTokenCount: ${data.usageMetadata.promptTokenCount || 'undefined'}`);
-            console.log(`candidatesTokenCount: ${data.usageMetadata.candidatesTokenCount || 'undefined'}`);
-            console.log(`totalTokenCount: ${data.usageMetadata.totalTokenCount || 'undefined'}`);
-          }
-          
+                    
           console.log('=== End Response ===');
         }        
 
