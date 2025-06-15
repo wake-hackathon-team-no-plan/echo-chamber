@@ -12,7 +12,7 @@ import { AppConfig } from '../../lib/app-config';
  */
 export async function generateMovie(
   prompt: string,
-  durationSeconds: number = 5.0,
+  durationSeconds: number = 8.0,
   aspectRatio: "16:9" | "9:16" = "16:9"
 ): Promise<{ videoPath: string } | { error: string }> {
   try {

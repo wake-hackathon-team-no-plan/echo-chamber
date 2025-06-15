@@ -145,6 +145,8 @@ export default function VoiceChat({ results, onBackToResults }: VoiceChatProps) 
         .replace("{{userPerspective}}", userPerspective)
         .replace("{{swipeAnswers}}", swipeAnswersStr)
         .replace("{{oppositePerspective}}", oppositePerspective);
+      console.log(`voice systemPrompt: ${swipeAnswersStr}`);
+      console.log(`voice systemPrompt: ${systemPrompt}`);
       const config: LiveConnectConfig = {
         responseModalities: [Modality.AUDIO],
         speechConfig: {
