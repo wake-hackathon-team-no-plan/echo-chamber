@@ -49,12 +49,14 @@ export async function generateImage(
     let imageDataUrl: string;
     let text: string | undefined;
     let gender: 'female' | 'male' = 'male'; // デフォルトは female
+    let voiceName: string;
     if (AppConfig.AI_STUB_MODE.IMAGE) {
       console.log('【画像生成】スタブモード: サンプル画像を使用');
       // スタブモードではサンプル画像のパスを返す
       imageDataUrl = '/api/images/sample1.png';
       text = undefined; // スタブモードではテキストは返さない
       gender = 'female';
+      voiceName = "Leda"
     } else {
       // Image Generation APIを呼び出し
       const result = await imageGenerationClient.generateImage(prompt, {
@@ -74,10 +76,11 @@ export async function generateImage(
           gender = 'female';
         }
       }
+
+      // 性別に応じて音声名をランダムに選択
+      voiceName = getRandomVoiceName(gender);
     }
 
-    // 性別に応じて音声名をランダムに選択
-    const voiceName = getRandomVoiceName(gender);
        
     console.log(`【画像生成】OUTPUT: 画像生成完了, imageDataUrl: ${imageDataUrl}${text ? `, テキスト: ${text}` : ''}, 性別: ${gender}, 音声名: ${voiceName}`);
 
