@@ -141,26 +141,10 @@ export default function VoiceChat({ results, onBackToResults }: VoiceChatProps) 
       // voiceName を localStorage (results.opposite.voiceName) から取得。無ければデフォルト "Aoede"
       const oppositeVoiceName = results.opposite?.voiceName || "Aoede";
 
-      //const systemPrompt = SYSTEM_PROMPT
-      //  .replace("{{userPerspective}}", userPerspective)
-      //  .replace("{{swipeAnswers}}", swipeAnswersStr)
-      //  .replace("{{oppositePerspective}}", oppositePerspective);
-      
-      const systemPrompt = `
-【指示】
-あなたは、【ユーザーの価値観】と真逆の価値観を持っています。
-でも、対立するのではなく、お互いの違いを面白がりながら語り合う友達関係です。
-自分の意見はしっかり持ちつつ、押しつけず、やわらかく対話を続けてください。
-会話ルール：
-•とにかく短い1文でポップに!
-•「僕は〜だと思うんだよね」「僕なら〜かな」みたいに、自分の感想で話す。
-•説明より感想！分析より感情！
-•最後は質問で締めて、ユーザーの考えを引き出す！
-•ユーザに質問して！
-
-【ユーザーの価値観】
-家族は、血の繋がりを超えた、心の繋がりだ。どんな関係性よりも大切。:共感 / 子供の幸せのためなら、親は自己犠牲も厭わない。それが当然。:共感 / 家族の価値観は、個人の自由を多少犠牲にしても守るべきものだ。:共感 / 親は子供に責任を持つべきだが、子供は親の期待に応える義務はない。:共感 / 伝統的な家族の形に固執する必要はない。多様性こそが、未来の家族の形だ。:非共感 / 家族の絆は、経済的な自立を妨げることもある。時には距離を置くことも必要。:共感 / 親の愛情は無条件ではない。子供も親も、お互いに尊重し合うべきだ。:共感 / 家族は、個人の成長を阻害することもある。自分の人生を優先するべきだ。:非共感 / たとえ血が繋がっていても、価値観が合わないなら、家族関係は破綻する。:共感 / 家族は、社会における最小単位であり、すべての価値観の基盤である。:共感
-`;
+      const systemPrompt = SYSTEM_PROMPT
+        .replace("{{userPerspective}}", userPerspective)
+        .replace("{{swipeAnswers}}", swipeAnswersStr)
+        .replace("{{oppositePerspective}}", oppositePerspective);
       console.log(`voice systemPrompt: ${swipeAnswersStr}`);
       console.log(`voice systemPrompt: ${systemPrompt}`);
       const config: LiveConnectConfig = {
